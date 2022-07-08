@@ -231,7 +231,22 @@ export default {
     headersMatrizX: [],
     headersTesteT: [],
     headersTabAnova:[],
-    dsVariaveis: [],
+    dsVariaveis: [
+        {
+            "nome": "",
+            "index": "1",
+            "unidade": " ",
+            "vBaixo": -1,
+            "vAlto": 1
+        },
+        {
+            "nome": "",
+            "index": "2",
+            "unidade": " ",
+            "vBaixo": -1,
+            "vAlto": 1
+        }
+    ],
     dsMatrix: [
       ,
     ],
@@ -385,8 +400,8 @@ export default {
       console.log("Dialog closed");
     },
   },
-  
-
+  mounted() {	
+	},
   watch: {
     Nvariaveis() {
      
@@ -408,6 +423,7 @@ export default {
           });
         }
       }
+      console.log("dsVariaveis:",this.dsVariaveis);
     },
   },
 };
