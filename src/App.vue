@@ -186,6 +186,8 @@ export default {
   name: "App",
 
   data: () => ({
+    url:'https://apiplanex.herokuapp.com',//heroku
+    //url:'http://127.0.0.1:5000',//local
     NReplicadas: 2,
     tela: 1,
     Nvariaveis: 2,
@@ -245,7 +247,7 @@ export default {
       switch (this.tela) {
         case 1:
           axios
-            .get("http://127.0.0.1:5000/matrix/" + this.Nvariaveis + "/" + this.NReplicadas)
+            .get(this.url+"/matrix/" + this.Nvariaveis + "/" + this.NReplicadas)
             .then((resp) => {
               let variaveis = resp.data.slice(1, this.Nvariaveis + 1);
               
@@ -291,7 +293,7 @@ export default {
           matrisY = JSON.stringify(matrisY);
 
           axios
-            .get("http://127.0.0.1:5000/matriTesteT/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY)
+            .get(this.url+"/matriTesteT/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY)
             .then(resp => {
               this.dsTesteT = resp.data.data.map(d =>{
                 return {...d , resposta:true}
@@ -333,7 +335,7 @@ export default {
           let matrisY1 = this.dsTesteT.map(v => [v.resposta == true ? 1:0]);
           matrisY1 = JSON.stringify(matrisY1);
           axios
-            .get("http://127.0.0.1:5000/tab_anova/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY+"/"+matrisY1)
+            .get(this.url+"/tab_anova/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY+"/"+matrisY1)
             .then(resp => {
               this.dsTabAnova = resp.data.data
               
