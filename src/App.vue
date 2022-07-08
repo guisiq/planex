@@ -45,7 +45,9 @@
                   disablePagination:false
 
                 }" -->
-
+              <template v-slot:[`item.index`]="props">
+                  X<sub>{{ props.item.index }}</sub>
+              </template>
               <template v-slot:[`item.name`]="props">
                 <v-edit-dialog :return-value.sync="props.item.nome" large persistent @save="save" @cancel="Cancelar"
                   @open="open" @close="close">
@@ -383,6 +385,7 @@ export default {
       console.log("Dialog closed");
     },
   },
+  
 
   watch: {
     Nvariaveis() {
@@ -397,7 +400,7 @@ export default {
      
         while (this.dsVariaveis.length != this.Nvariaveis) {
           this.dsVariaveis.push({
-            nome: "x" + (this.dsVariaveis.length+1),
+            nome: "",
             index:  "" + (this.dsVariaveis.length+1),
             unidade: " ",
             vBaixo: -1.0,
