@@ -1,14 +1,30 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import DCC from '../views/dcc.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
+    meta:{
+      title:"Sobre"
+    },
+    title:"Sobre",
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    icon: 'door-open'
+  },
+  {
+    meta:{
+      title:"Delineamento Composto Central (DCC)"
+    },
+    title:"Delineamento Composto Central (DCC)",
+    icon: 'list-nested', 
+    path: '/DCC',
+    name: 'DCC',
+    component: DCC
   },
   // {
   //   path: '/about',
