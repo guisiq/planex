@@ -1,179 +1,265 @@
 <template>
-      <v-stepper v-model="tela">
-      <v-stepper-header>
-        <v-stepper-step :complete="tela > 1" step="1">
-          Variaveis
-        </v-stepper-step>
+  <v-stepper v-model="tela">
+    <v-stepper-header>
+      <v-stepper-step :complete="tela > 1" step="1">
+        Variaveis
+      </v-stepper-step>
 
-        <v-divider></v-divider>
+      <v-divider></v-divider>
 
-        <v-stepper-step :complete="tela > 2" step="2">
-          Respostas
-        </v-stepper-step>
+      <v-stepper-step :complete="tela > 2" step="2">
+        Respostas
+      </v-stepper-step>
 
-        <v-divider></v-divider>
+      <v-divider></v-divider>
+      <v-stepper-step :complete="tela > 3" step="3">
+        resultados
+      </v-stepper-step>
 
-        <v-stepper-step step="3"> Teste T </v-stepper-step>
+      <v-divider></v-divider>
 
-        <v-divider></v-divider>
+      <v-stepper-step :complete="tela > 4" step="4"> Teste T </v-stepper-step>
 
-        <v-stepper-step step="4"> Tabela de Anova </v-stepper-step>
-      </v-stepper-header>
+      <v-divider></v-divider>
 
-      <v-stepper-items>
-        <!-- variaveis -->
-        <v-stepper-content step="1">
-          <v-card class="mb-12">
-            <v-row>
-              <v-col>
-                <label for="nVariaveisInput">Escolha a quantidade de variaveis (K) :</label>
-                <v-text-field id="nVariaveisInput" type="number" step="any" min="0" ref="input" :rules="[numberRule]"
-                  v-model.number="Nvariaveis"></v-text-field>
-              </v-col>
-              <v-col>
-                <label for="nVariaveisInput">Escolha a quantidade de replicatas do ponto central (rpc) :</label>
-                <v-text-field id="nReplicadasInput" type="number" step="any" min="0" ref="input" :rules="[numberRule]"
-                  v-model.number="NReplicadas"></v-text-field>
-              </v-col>
-            </v-row>
+      <v-stepper-step :complete="tela > 5" step="5"> Tabela de Anova </v-stepper-step>
+    </v-stepper-header>
 
-            <!-- tabela -->
-            <v-data-table  :headers="headersVariaveis" :items="dsVariaveis" disable-pagination
-              :hide-default-footer="true">
-              <!-- :footer-props="{
+    <v-stepper-items>
+      <!-- variaveis -->
+      <v-stepper-content step="1">
+        <v-card class="mb-12">
+          <v-row>
+            <v-col>
+              <label for="nVariaveisInput">Escolha a quantidade de variaveis (K) :</label>
+              <v-text-field id="nVariaveisInput" type="number" step="any" min="0" ref="input" :rules="[numberRule]"
+                v-model.number="Nvariaveis"></v-text-field>
+            </v-col>
+            <v-col>
+              <label for="nVariaveisInput">Escolha a quantidade de replicatas do ponto central (rpc) :</label>
+              <v-text-field id="nReplicadasInput" type="number" step="any" min="0" ref="input" :rules="[numberRule]"
+                v-model.number="NReplicadas"></v-text-field>
+            </v-col>
+          </v-row>
+
+          <!-- tabela -->
+          <v-data-table :headers="headersVariaveis" :items="dsVariaveis" disable-pagination :hide-default-footer="true">
+            <!-- :footer-props="{
                   disablePagination:false
 
                 }" -->
-              <template v-slot:[`item.index`]="props">
-                  X<sub>{{ props.item.index }}</sub>
-              </template>
-              <template v-slot:[`item.name`]="props">
-                <v-edit-dialog :return-value.sync="props.item.nome" large persistent @save="save" @cancel="Cancelar"
-                  @open="open" @close="close">
-                  <div>{{ props.item.nome }}</div>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">atualizar nome</div>
-                    <v-text-field v-model="props.item.nome" :rules="[max25chars]" label="Edit" single-line counter
-                      autofocus></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </template>
-              <template v-slot:[`item.unidade`]="props">
-                <v-edit-dialog :return-value.sync="props.item.unidade" large persistent @save="save" @cancel="Cancelar"
-                  @open="open" @close="close">
-                  <div>{{ props.item.unidade }}</div>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">atualizar unidade</div>
-                    <v-text-field v-model="props.item.unidade" :rules="[max25chars]" label="Edit" single-line counter
-                      autofocus></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </template>
-              <template v-slot:[`item.vBaixo`]="props">
-                <v-edit-dialog :return-value.sync="props.item.vBaixo" large persistent @save="save" @cancel="Cancelar"
-                  @open="open" @close="close">
-                  <div>{{ props.item.vBaixo }}</div>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">Atualizar valor baixo</div>
-                    <v-text-field v-model="props.item.vBaixo" :rules="[max25chars]" label="Edit" single-line counter
-                      autofocus></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </template>
-              <template v-slot:[`item.vAlto`]="props">
-                <v-edit-dialog :return-value.sync="props.item.vAlto" large persistent @save="save" @cancel="Cancelar"
-                  @open="open" @close="close">
-                  <div>{{ props.item.vAlto }}</div>
-                  <template v-slot:input>
-                    <div class="mt-4 text-h6">Atualizar valor alto</div>
-                    <v-text-field v-model="props.item.vAlto" :rules="[max25chars]" label="Edit" single-line counter
-                      autofocus></v-text-field>
-                  </template>
-                </v-edit-dialog>
-              </template>
-            </v-data-table>
+            <template v-slot:[`item.index`]="props">
+              X<sub>{{ props.item.index }}</sub>
+            </template>
+            <template v-slot:[`item.name`]="props">
+              <v-edit-dialog :return-value.sync="props.item.nome" large persistent @save="save" @cancel="cancel"
+                @open="open" @close="close">
+                <div>{{ props.item.nome }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">atualizar nome</div>
+                  <v-text-field v-model="props.item.nome" :rules="[max25chars]" label="Edit" single-line counter
+                    autofocus></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <template v-slot:[`item.unidade`]="props">
+              <v-edit-dialog :return-value.sync="props.item.unidade" large persistent @save="save" @cancel="cancel"
+                @open="open" @close="close">
+                <div>{{ props.item.unidade }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">atualizar unidade</div>
+                  <v-text-field v-model="props.item.unidade" :rules="[max25chars]" label="Edit" single-line counter
+                    autofocus></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <template v-slot:[`item.vBaixo`]="props">
+              <v-edit-dialog :return-value.sync="props.item.vBaixo" large persistent @save="save" @cancel="cancel"
+                @open="open" @close="close">
+                <div>{{ props.item.vBaixo }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">Atualizar valor baixo</div>
+                  <v-text-field v-model="props.item.vBaixo" :rules="[max25chars]" label="Edit" single-line counter
+                    autofocus></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <template v-slot:[`item.vAlto`]="props">
+              <v-edit-dialog :return-value.sync="props.item.vAlto" large persistent @save="save" @cancel="cancel"
+                @open="open" @close="close">
+                <div>{{ props.item.vAlto }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">Atualizar valor alto</div>
+                  <v-text-field v-model="props.item.vAlto" :rules="[max25chars]" label="Edit" single-line counter
+                    autofocus></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+          </v-data-table>
 
-            <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-              {{ snackText }}
+          <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+            {{ snackText }}
 
-              <template v-slot:action="{ attrs }">
-                <v-btn v-bind="attrs" text @click="snack = false">
-                  Close
-                </v-btn>
-              </template>
-            </v-snackbar>
-          </v-card>
+            <template v-slot:action="{ attrs }">
+              <v-btn v-bind="attrs" text @click="snack = false">
+                Close
+              </v-btn>
+            </template>
+          </v-snackbar>
+        </v-card>
 
-          <v-btn text> Cancelar </v-btn>
+        <v-btn text> Cancelar </v-btn>
 
-          <v-btn @click="voltar"> Voltar </v-btn>
-          <v-btn color="primary" @click="avancar"> Continuar </v-btn>
-        </v-stepper-content>
-        <!-- respostas  -->
-        <v-stepper-content step="2">
-          <v-card class="mb-12">
-             <v-data-table :headers="headersMatrizX" :items="dsMatrix" disable-pagination
-              :hide-default-footer="true">
-              <template v-slot:[`item.resposta`]="props">
-                  <v-edit-dialog :return-value.sync="props.item.resposta" large persistent @save="save" @cancel="cancel"
-                    @open="open" @close="close">
-                    <div>{{ props.item.resposta }}</div>
-                    <template v-slot:input>
-                      <div class="mt-4 text-h6">atualizar resposta</div>
-                      <v-text-field v-model.number="props.item.resposta"  label="Edit" single-line counter
-                        autofocus></v-text-field>
-                    </template>
-                  </v-edit-dialog>
-              </template>
-             </v-data-table>
-             <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
-              {{ snackText }}
+        <v-btn @click="voltar"> Voltar </v-btn>
+        <v-btn color="primary" @click="avancar"> Continuar </v-btn>
+      </v-stepper-content>
+      <!-- respostas -->
+      <v-stepper-content step="2">
+        <v-card class="mb-12">
+          <v-row>
+            <v-col>
+              <label for="nRespostasInput">Escolha a quantidade de Respostas (y) :</label>
+              <v-text-field id="nRespostasInput" type="number" step="any" min="0" ref="input" :rules="[numberRule]"
+                v-model.number="NRespostas"></v-text-field>
+            </v-col>
+          </v-row>
 
-              <template v-slot:action="{ attrs }">
-                <v-btn v-bind="attrs" text @click="snack = false">
-                  Close
-                </v-btn>
-              </template>
-            </v-snackbar>
-          </v-card>
-          <v-btn text> Cancelar </v-btn>
+          <!-- tabela -->
+          <v-data-table :headers="headersResposta" :items="dsResposta" disable-pagination :hide-default-footer="true">
+            <!-- :footer-props="{
+                  disablePagination:false
 
-          <v-btn @click="voltar"> Voltar </v-btn>
-          <v-btn color="primary" @click="avancar"> Continuar </v-btn>
-        </v-stepper-content>
-        <!-- teste T -->
-        <v-stepper-content step="3">
-          <v-card class="mb-12" ></v-card>
-            <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination
-              :hide-default-footer="true">
-            <template v-slot:[`item.resposta`]="props">
-              
-              <v-checkbox
-                v-model="props"
-              ></v-checkbox>
-              </template>
-            </v-data-table>
-            
-          <v-btn text> Cancelar </v-btn>
+                }" -->
+            <template v-slot:[`item.index`]="props">
+              Y<sub>{{ props.item.index }}</sub>
+            </template>
+            <template v-slot:[`item.name`]="props">
+              <v-edit-dialog :return-value.sync="props.item.nome" large persistent @save="save" @cancel="cancel"
+                @open="open" @close="close">
+                <div>{{ props.item.nome }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">atualizar nome</div>
+                  <v-text-field v-model="props.item.nome" :rules="[max25chars]" label="Edit" single-line counter
+                    autofocus></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <template v-slot:[`item.unidade`]="props">
+              <v-edit-dialog :return-value.sync="props.item.unidade" large persistent @save="save" @cancel="cancel"
+                @open="open" @close="close">
+                <div>{{ props.item.unidade }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">atualizar unidade</div>
+                  <v-text-field v-model="props.item.unidade" :rules="[max25chars]" label="Edit" single-line counter
+                    autofocus></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
 
-          <v-btn @click="voltar"> Voltar </v-btn>
-          <v-btn color="primary" @click="avancar"> Continuar </v-btn>
-        </v-stepper-content>
-        <!-- TabAnova -->
-        <v-stepper-content step="4">
-          <v-card class="mb-12" ></v-card>
-            <v-data-table 
-              :headers="headersTabAnova" 
-              :items="dsTabAnova" 
-              disable-pagination
-              :hide-default-footer="true">            
-            </v-data-table>
-            <!-- <span>Y = <span v-for="(item, index) in dsTesteT" >{{item.be}}</span></span> -->
-            <v-btn @click="voltar"> Voltar </v-btn>
-          <v-btn color="primary" @click="avancar"> Continuar </v-btn>
-        </v-stepper-content>
-      </v-stepper-items>
-    </v-stepper>
+          </v-data-table>
+
+          <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+            {{ snackText }}
+
+            <template v-slot:action="{ attrs }">
+              <v-btn v-bind="attrs" text @click="snack = false">
+                Close
+              </v-btn>
+            </template>
+          </v-snackbar>
+        </v-card>
+
+        <v-btn text> Cancelar </v-btn>
+
+        <v-btn @click="voltar"> Voltar </v-btn>
+        <v-btn color="primary" @click="avancar"> Continuar </v-btn>
+      </v-stepper-content>
+      <!-- resultados  -->
+      <v-stepper-content step="3">
+        <v-card class="mb-12">
+          <v-data-table :headers="headersMatrizX" :items="dsMatrix" disable-pagination :hide-default-footer="true">
+          
+            <template v-for="resposta in dsResposta"  v-slot:[resposta.attributeName3]="props">
+              <v-edit-dialog 
+                :key="resposta.index" 
+                :return-value.sync="props.item[resposta.attributeName]" 
+                large 
+                persistent 
+                @save="save" 
+                @cancel="cancel"
+                @open="open" 
+                @close="close">
+                <div>{{ props.item[resposta.attributeName] }}</div>
+                <template v-slot:input>
+                  <div class="mt-4 text-h6">atualizar resposta</div>
+                  <v-text-field v-model.number="props.item[resposta.attributeName]" label="Edit" single-line counter autofocus>
+                  </v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+          
+          </v-data-table>
+          <!--
+            <div  v-for="resposta in dsResposta" :key="resposta.index" >
+              {{resposta.index}}---{{resposta.attributeName}}
+            </div>
+          -->
+          <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+            {{ snackText }}
+
+            <template v-slot:action="{ attrs }">
+              <v-btn v-bind="attrs" text @click="snack = false">
+                Close
+              </v-btn>
+            </template>
+          </v-snackbar>
+        </v-card>
+        <v-btn text> Cancelar </v-btn>
+
+        <v-btn @click="voltar"> Voltar </v-btn>
+        <v-btn color="primary" @click="avancar"> Continuar </v-btn>
+      </v-stepper-content>
+      <!-- teste T -->
+      <v-stepper-content step="4">
+        <v-card class="mb-12"></v-card>
+          <v-select
+            v-model="select"
+            :items="dsResposta"
+            item-text="nome"
+            persistent-hint
+            return-object
+            single-line
+          >
+            <template slot="selection">
+              Y<sub> {{select.index}}</sub> - {{select.name}}
+            </template>
+            <template v-slot:item="{ item }">
+              Y<sub> {{item.index}} </sub> - {{item.name}}
+            </template>
+          </v-select>
+        <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination :hide-default-footer="true">
+          <template v-slot:[`item.resposta`]="props">
+
+            <v-checkbox v-model="props.resposta"></v-checkbox>
+          </template>
+        </v-data-table>
+
+        <v-btn text> Cancelar </v-btn>
+
+        <v-btn @click="voltar"> Voltar </v-btn>
+        <v-btn color="primary" @click="avancar"> Continuar </v-btn>
+      </v-stepper-content>
+      <!-- TabAnova -->
+      <v-stepper-content step="5">
+        <v-card class="mb-12"></v-card>
+        <v-data-table :headers="headersTabAnova" :items="dsTabAnova" disable-pagination :hide-default-footer="true">
+        </v-data-table>
+        <!-- <span>Y = <span v-for="(item, index) in dsTesteT" >{{item.be}}</span></span> -->
+        <v-btn @click="voltar"> Voltar </v-btn>
+        <v-btn color="primary" @click="avancar"> Continuar </v-btn>
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 </template>
 
 <script>
@@ -186,9 +272,11 @@ export default {
   name: "DCC",
 
   data: () => ({
+
     url:'https://apiplanex.herokuapp.com',//heroku
     //url:'http://127.0.0.1:5000',//local
     NReplicadas: 2,
+    NRespostas:2,
     tela: 1,
     Nvariaveis: 2,
     snack: false,
@@ -226,6 +314,26 @@ export default {
         value: "vAlto",
       },
     ],
+    headersResposta: [
+      {
+        text: "Simbolo das Resposta",
+        align: "start",
+        sortable: false,
+        value: "index",
+      },
+      {
+        text: "Identifique as resposta ",
+        align: "start",
+        sortable: false,
+        value: "name",
+      },
+      {
+        text: "Identifique as unidade de medida",
+        align: "start",
+        sortable: false,
+        value: "unidade",
+      },
+    ],
     headersMatrizX: [],
     headersTesteT: [],
     headersTabAnova:[],
@@ -245,9 +353,24 @@ export default {
             "vAlto": 1
         }
     ],
-    dsMatrix: [
-      ,
+    dsResposta: [
+        {
+            "nome": "",
+            "index": "1",
+            "unidade": " "
+        },
+        {
+            "nome": "",
+            "index": "2",
+            "unidade": " "
+        }
     ],
+    select: {
+            "nome": "",
+            "index": "1",
+            "unidade": " "
+        },
+    dsMatrix: [],
     dsTesteT:[],
     dsTabAnova:[],
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
@@ -260,89 +383,57 @@ export default {
     },
     avancar() {
       switch (this.tela) {
-        case 1:
-          axios
-            .get(this.url+"/matrix/" + this.Nvariaveis + "/" + this.NReplicadas)
-            .then((resp) => {
-              let variaveis = resp.data.slice(1, this.Nvariaveis + 1);
-              
-              let variaveisEstruct = []
-
-              for (let i = 0; i < variaveis[0].length; i++) {
-                variaveisEstruct.push(new Object);
-              }
-               this.headersMatrizX = [];
-              for (let e = 0; e < variaveis.length; e++) {
-                this.headersMatrizX.push({
-                      text:"("+this.dsVariaveis[e].index+") "+ this.dsVariaveis[e].nome,
-                      align: "start",
-                      sortable: false,
-                      value: this.dsVariaveis[e].index,
-                    }
-                  )
-              }
-              this.headersMatrizX.push({
-                      text: "resposta",
-                      align: "start",
-                      sortable: false,
-                      value: "resposta",
-                    }
-                  )
-      
-
-              for (let i = 0; i < variaveisEstruct.length; i++) {
-                for (let e = 0; e < variaveis.length; e++) {
-                  variaveisEstruct[i][this.dsVariaveis[e].index] = variaveis[e][i];
-                }
-                variaveisEstruct[i]["resposta"] = 0;
-              }
-              this.dsMatrix = variaveisEstruct;
-            });
+        case 2:
+          this.definirMatx();
+          console.log(this);
           break;
 
-        case 2:{
+        case 3:{
 
-        
-          let matrisY = this.dsMatrix.map(v => [v.resposta]);
+          for (let index = 0; index < this.dsResposta.length; index++) {
+            const element = this.dsResposta[index];
+            let matrisY = [];
+            matrisY[element.index] = this.dsMatrix.map(v => [v[element.attributeName]]);
 
-          matrisY = JSON.stringify(matrisY);
+            matrisY[element.index] = JSON.stringify(matrisY[element.index]);
 
-          axios
-            .get(this.url+"/matriTesteT/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY)
-            .then(resp => {
-              this.dsTesteT = resp.data.data.map(d =>{
-                return {...d , resposta:true}
-              });
-              
-              this.headersTesteT = resp.data.schema.fields.map(f => {
-                return {
-                  text: f.name,
-                  align: "start",
-                  sortable: false,
-                  value: f.name,
-                }
-              });
-              this.headersTesteT.push({
+            axios
+              .get(this.url + "/matriTesteT/" + this.Nvariaveis + "/" + this.NReplicadas + "/" + matrisY[element.index])
+              .then(resp => {
+                this.dsTesteT[element.index] = resp.data.data.map(d => {
+                  return { ...d, resposta: true }
+                });
+
+                this.headersTesteT[element.index] = resp.data.schema.fields.map(f => {
+                  return {
+                    text: f.name,
+                    align: "start",
+                    sortable: false,
+                    value: f.name,
+                  }
+                });
+                this.headersTesteT[element.index].push({
                   text: "aceitação/regeicao",
                   align: "start",
                   sortable: false,
                   value: "resposta",
-                }) 
-            this.dsTesteT.map(f => {
-              f["t crítico"]=f["t crítico"].toFixed(6);
-              f["H0"]=f["H0"].toFixed(6);
-              f["er"]=f["er"].toFixed(6);
-              f["B"]=f["B"].toFixed(6);
-              f["t[(B - H0)/er]"]=f["t[(B - H0)/er]"]===null?0:f["t[(B - H0)/er]"].toFixed(6);
-              f["p-valor"]=f["p-valor"]===null?0:f["p-valor"].toFixed(6);
-            }) 
-            console.log("this.dsTesteT :",this.dsTesteT );
-            })
+                })
+                this.dsTesteT[element.index].map(f => {
+                  f["t crítico"] = f["t crítico"] == null ? 0 : f["t crítico"].toFixed(6);
+                  f["H0"] = f["H0"] == null ? 0 : f["H0"].toFixed(6);
+                  f["er"] = f["er"] == null ? 0 : f["er"].toFixed(6);
+                  f["B"] = f["B"] == null ? 0 : f["B"].toFixed(6);
+                  f["t[(B - H0)/er]"] = f["t[(B - H0)/er]"] == null ? 0 : f["t[(B - H0)/er]"].toFixed(6);
+                  f["p-valor"] = f["p-valor"] == null ? 0 : f["p-valor"].toFixed(6);
+                })
 
+              })
+
+          }
         }
           break
 
-        case 3:
+        case 4:
           let matrisY = this.dsMatrix.map(v => [v.resposta]);
           
           matrisY = JSON.stringify(matrisY);
@@ -369,10 +460,60 @@ export default {
           break;
       }
 
-      if (this.tela <= 3) {
+      if (this.tela <= 4) {
         this.tela++;
       }
 
+    },
+    definirmarty(){
+
+    },
+    definirMatx(){
+      axios
+        .get(this.url+"/matrix/" + this.Nvariaveis + "/" + this.NReplicadas)
+        .then((resp) => {
+          let variaveis = resp.data.slice(1, this.Nvariaveis + 1);
+          
+          let variaveisEstruct = []
+
+          for (let i = 0; i < variaveis[0].length; i++) {
+            variaveisEstruct.push(new Object);
+          }
+            this.headersMatrizX = [];
+          for (let e = 0; e < variaveis.length; e++) {
+            this.headersMatrizX.push({
+                  text:"("+this.dsVariaveis[e].index+") "+ this.dsVariaveis[e].nome,
+                  align: "start",
+                  sortable: false,
+                  value: this.dsVariaveis[e].index,
+                }
+              )
+          }
+        
+
+
+          for (let i = 0; i < variaveisEstruct.length; i++) {
+            for (let e = 0; e < variaveis.length; e++) {
+              variaveisEstruct[i][this.dsVariaveis[e].index] = variaveis[e][i];
+            }
+            for(let e = 0; e < this.dsResposta.length; e++){
+              variaveisEstruct[i]["resposta"+this.dsResposta[e].index] = 0;
+            }
+          }
+          for(let e = 0; e < this.dsResposta.length; e++){
+              this.headersMatrizX.push({
+                  text: "resposta Y_"+this.dsResposta[e].index,
+                  align: "start",
+                  sortable: false,
+                  value: "resposta"+this.dsResposta[e].index,
+                }
+              )
+              this.dsResposta[e].attributeName2 = "resposta Y_"+this.dsResposta[e].index
+              this.dsResposta[e].attributeName = `resposta`+this.dsResposta[e].index
+              this.dsResposta[e].attributeName3 = `item.resposta`+this.dsResposta[e].index
+            }
+          this.dsMatrix = variaveisEstruct;
+        });
     },
     voltar() {
       if (this.tela > 1) {
@@ -421,7 +562,6 @@ export default {
           });
         }
       }
-      console.log("dsVariaveis:",this.dsVariaveis);
     },
   },
 };
