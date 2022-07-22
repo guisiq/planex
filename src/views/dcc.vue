@@ -27,7 +27,7 @@
 
     <v-stepper-items>
       <!-- variaveis -->
-      <v-stepper-content step="1">
+      <v-stepper-content step="2">
         <v-card class="mb-12">
           <v-row>
             <v-col>
@@ -114,7 +114,7 @@
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
       <!-- respostas -->
-      <v-stepper-content step="2">
+      <v-stepper-content step="1">
         <v-card class="mb-12">
           <v-row>
             <v-col>
@@ -157,6 +157,25 @@
             </template>
 
           </v-data-table>
+          <!-- <v-select
+            v-model="select"
+            :items="dsResposta"
+            item-text="name"
+            persistent-hint
+            return-object
+            single-line
+            v-on:change="mudarVariavel()"
+          >
+            <template slot="selection">
+              Y<sub> {{select.index}}</sub> - {{select.nome}}
+            </template>
+            <template v-slot:item="{item}">
+              Y<sub> {{item.index}}</sub> - {{item.nome}}
+            </template>
+            <template v-slot:option="item">
+              Y<sub> {{item.index}}</sub> - {{item.nome}}
+            </template>
+          </v-select> -->
 
           <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
             {{ snackText }}
@@ -225,7 +244,7 @@
           <v-select
             v-model="select"
             :items="dsResposta"
-            item-text="nome"
+            item-text="index"
             persistent-hint
             return-object
             single-line
@@ -241,6 +260,7 @@
               Y<sub> {{item.index}}</sub> - {{item.nome}}
             </template>
           </v-select>
+        
         <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination :hide-default-footer="true">
           <template v-slot:[`item.resposta`]="props">
 
@@ -599,6 +619,9 @@ export default {
           });
         }
       }
+      this.dsResposta.map(x => {
+        console.log("x:",x)
+      })
     },
     // select(){
 
