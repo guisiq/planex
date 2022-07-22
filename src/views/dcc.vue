@@ -27,7 +27,7 @@
 
     <v-stepper-items>
       <!-- variaveis -->
-      <v-stepper-content step="2">
+      <v-stepper-content step="1">
         <v-card class="mb-12">
           <v-row>
             <v-col>
@@ -114,7 +114,7 @@
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
       <!-- respostas -->
-      <v-stepper-content step="1">
+      <v-stepper-content step="2">
         <v-card class="mb-12">
           <v-row>
             <v-col>
