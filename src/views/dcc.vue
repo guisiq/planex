@@ -276,6 +276,25 @@
       <!-- TabAnova -->
       <v-stepper-content step="5">
         <v-card class="mb-12"></v-card>
+                  <v-select
+            v-model="select"
+            :items="dsResposta"
+            item-text="index"
+            persistent-hint
+            return-object
+            single-line
+            v-on:change="mudarVariavel()"
+          >
+            <template slot="selection">
+              Y<sub> {{select.index}}</sub> - {{select.nome}}
+            </template>
+            <template v-slot:item="{item}">
+              Y<sub> {{item.index}}</sub> - {{item.nome}}
+            </template>
+            <template v-slot:option="item">
+              Y<sub> {{item.index}}</sub> - {{item.nome}}
+            </template>
+          </v-select>
         <v-data-table :headers="headersTabAnova" :items="dsTabAnova" disable-pagination :hide-default-footer="true">
         </v-data-table>
         <!-- <span>Y = <span v-for="(item, index) in dsTesteT" >{{item.be}}</span></span> -->
@@ -400,6 +419,7 @@ export default {
     dsTesteT:[],
     dssTesteT:[],
     dsTabAnova:[],
+    dssTabAnova:[],
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
   }),
   
@@ -467,27 +487,38 @@ export default {
           break
 
         case 4:
-          let matrisY = this.dsMatrix.map(v => [v.resposta]);
-          
-          matrisY = JSON.stringify(matrisY);
-          
-          let matrisY1 = this.dsTesteT.map(v => [v.resposta == true ? 1:0]);
-          matrisY1 = JSON.stringify(matrisY1);
-          axios
-            .get(this.url+"/tab_anova/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY+"/"+matrisY1)
-            .then(resp => {
-              this.dsTabAnova = resp.data.data
-              
-              this.headersTabAnova = resp.data.schema.fields.map(f => {
-                return {
-                  text: f.name,
-                  align: "start",
-                  sortable: false,
-                  value: f.name,
-                }
-              });
-            })
-          
+          for (let index = 0; index < this.dsResposta.length; index++) {
+            const element = this.dsResposta[index];
+            let matrisY = [];
+            
+            matrisY[element.index] = this.dsMatrix.map(v => [v[element.attributeName]]);
+            matrisY[element.index] = JSON.stringify(matrisY[element.index]);
+            
+            let matrisY1 =[];
+            
+            matrisY1[element.index] = this.dssTesteT[element.index].map(v => [v.resposta == true ? 1:0]);
+            console.log("matrisY1[element.index]:",matrisY1[element.index]);
+            matrisY1[element.index] = JSON.stringify(matrisY1[element.index]);
+            console.log("matrisY1[element.index]|stringify:",matrisY1[element.index]);
+
+            axios
+              .get(this.url+"/tab_anova/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY[element.index]+"/"+matrisY1[element.index])
+              .then(resp => {
+                this.dssTabAnova[element.index] = resp.data.data
+                
+                this.headersTabAnova = resp.data.schema.fields.map(f => {
+                  return {
+                    text: f.name,
+                    align: "start",
+                    sortable: false,
+                    value: f.name,
+                  }
+                });
+              })
+          }
+          console.log("dssTabAnova:",this.dssTabAnova)
+          this.dsTabAnova = this.dssTabAnova[ this.select.index ];
+      
           break
         default:
           break;
@@ -551,6 +582,7 @@ export default {
     mudarVariavel(){
           this.dsTesteT = this.dssTesteT[this.select.index];
           this.headersTesteT = this.headerssTesteT[this.select.index];
+          this.dsTabAnova = this.dssTabAnova[ this.select.index ];
     },
     voltar() {
       if (this.tela > 1) {
