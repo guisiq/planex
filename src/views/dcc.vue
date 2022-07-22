@@ -566,13 +566,12 @@ export default {
           }
           for(let e = 0; e < this.dsResposta.length; e++){
               this.headersMatrizX.push({
-                  text: "resposta Y_"+this.dsResposta[e].index,
+                  text: "resposta "+this.dsResposta[e].index,
                   align: "start",
                   sortable: false,
                   value: "resposta"+this.dsResposta[e].index,
                 }
               )
-              this.dsResposta[e].attributeName2 = "resposta Y_"+this.dsResposta[e].index
               this.dsResposta[e].attributeName = `resposta`+this.dsResposta[e].index
               this.dsResposta[e].attributeName3 = `item.resposta`+this.dsResposta[e].index
             }
