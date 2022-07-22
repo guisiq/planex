@@ -133,8 +133,8 @@
             <template v-slot:[`item.index`]="props">
               Y<sub>{{ props.item.index }}</sub>
             </template>
-            <template v-slot:[`item.name`]="props">
-              <v-edit-dialog :return-value.sync="props.item.nome" large persistent @save="save" @cancel="cancel"
+            <template v-slot:[`item.nome`]="props">
+              <v-edit-dialog :return-value="props.item.nome" large persistent @save="save" @cancel="cancel"
                 @open="open" @close="close">
                 <div>{{ props.item.nome }}</div>
                 <template v-slot:input>
@@ -145,7 +145,7 @@
               </v-edit-dialog>
             </template>
             <template v-slot:[`item.unidade`]="props">
-              <v-edit-dialog :return-value.sync="props.item.unidade" large persistent @save="save" @cancel="cancel"
+              <v-edit-dialog :return-value="props.item.unidade" large persistent @save="save" @cancel="cancel"
                 @open="open" @close="close">
                 <div>{{ props.item.unidade }}</div>
                 <template v-slot:input>
@@ -229,12 +229,16 @@
             persistent-hint
             return-object
             single-line
+            v-on:change="mudarVariavel()"
           >
             <template slot="selection">
-              Y<sub> {{select.index}}</sub> - {{select.name}}
+              Y<sub> {{select.index}}</sub> - {{select.nome}}
             </template>
-            <template v-slot:item="{ item }">
-              Y<sub> {{item.index}} </sub> - {{item.name}}
+            <template v-slot:item="{item}">
+              Y<sub> {{item.index}}</sub> - {{item.nome}}
+            </template>
+            <template v-slot:option="item">
+              Y<sub> {{item.index}}</sub> - {{item.nome}}
             </template>
           </v-select>
         <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination :hide-default-footer="true">
@@ -325,7 +329,7 @@ export default {
         text: "Identifique as resposta ",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "nome",
       },
       {
         text: "Identifique as unidade de medida",
@@ -336,6 +340,7 @@ export default {
     ],
     headersMatrizX: [],
     headersTesteT: [],
+    headerssTesteT: [],
     headersTabAnova:[],
     dsVariaveis: [
         {
@@ -355,23 +360,25 @@ export default {
     ],
     dsResposta: [
         {
-            "nome": "",
+            "nome": "_",
             "index": "1",
-            "unidade": " "
+            "unidade": "_"
         },
         {
-            "nome": "",
+            "nome": "_",
             "index": "2",
-            "unidade": " "
+            "unidade": "_"
         }
     ],
-    select: {
-            "nome": "",
-            "index": "1",
-            "unidade": " "
-        },
+    select:{
+          "nome": "selecione uma resposta",
+          "index": "0",
+          "unidade": " "
+      }
+        ,
     dsMatrix: [],
     dsTesteT:[],
+    dssTesteT:[],
     dsTabAnova:[],
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
   }),
@@ -400,11 +407,11 @@ export default {
             axios
               .get(this.url + "/matriTesteT/" + this.Nvariaveis + "/" + this.NReplicadas + "/" + matrisY[element.index])
               .then(resp => {
-                this.dsTesteT[element.index] = resp.data.data.map(d => {
+                this.dssTesteT[element.index] = resp.data.data.map(d => {
                   return { ...d, resposta: true }
                 });
 
-                this.headersTesteT[element.index] = resp.data.schema.fields.map(f => {
+                this.headerssTesteT[element.index] = resp.data.schema.fields.map(f => {
                   return {
                     text: f.name,
                     align: "start",
@@ -412,13 +419,13 @@ export default {
                     value: f.name,
                   }
                 });
-                this.headersTesteT[element.index].push({
+                this.headerssTesteT[element.index].push({
                   text: "aceitação/regeicao",
                   align: "start",
                   sortable: false,
                   value: "resposta",
                 })
-                this.dsTesteT[element.index].map(f => {
+                this.dssTesteT[element.index].map(f => {
                   f["t crítico"] = f["t crítico"] == null ? 0 : f["t crítico"].toFixed(6);
                   f["H0"] = f["H0"] == null ? 0 : f["H0"].toFixed(6);
                   f["er"] = f["er"] == null ? 0 : f["er"].toFixed(6);
@@ -430,6 +437,12 @@ export default {
               })
 
           }
+
+          this.select = this.dsResposta[0];
+          this.dsTesteT = this.dssTesteT[this.select.index];
+          this.headersTesteT = this.headerssTesteT[this.select.index];
+          console.log("dssTesteT:",this.dssTesteT);
+          console.log("this.dsResposta:",this.dsResposta );
         }
           break
 
@@ -515,6 +528,10 @@ export default {
           this.dsMatrix = variaveisEstruct;
         });
     },
+    mudarVariavel(){
+          this.dsTesteT = this.dssTesteT[this.select.index];
+          this.headersTesteT = this.headerssTesteT[this.select.index];
+    },
     voltar() {
       if (this.tela > 1) {
         this.tela--;
@@ -563,6 +580,29 @@ export default {
         }
       }
     },
+    NRespostas() {
+     
+      if (this.dsResposta.length == this.NRespostas) {
+        return;
+      } else if (this.dsResposta.length > this.NRespostas) {
+        while (this.dsResposta.length != this.NRespostas) {
+          this.dsResposta.splice(this.dsResposta.length - 1, 1);
+        }
+      } else if (this.dsResposta.length < this.NRespostas) {
+     
+        while (this.dsResposta.length != this.NRespostas) {
+          this.dsResposta.push({
+            nome: "_",
+            index: ""+(this.dsResposta.length+1),
+            unidade: "_",
+        
+          });
+        }
+      }
+    },
+    // select(){
+
+    // }
   },
 };
 </script>

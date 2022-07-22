@@ -59,10 +59,6 @@
   export default {
     computed:{
        routes () {
-        console.log(this.$router);
-        console.log(this.$router.history);
-        console.log(this.$router.history.current.meta.title);
-        console.log(this.$router.meta);
         return this.$router.options.routes;
       }
     },
