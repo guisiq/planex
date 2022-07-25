@@ -265,6 +265,9 @@
           <template v-slot:[`item.resposta`]="props">
             <v-checkbox v-model="props.item.resposta" v-on:change="check(props)" ></v-checkbox>
           </template>
+          <template v-slot:[`item.X`]="props">
+            X<sub> {{props.item.X}}</sub> 
+          </template>
         </v-data-table>
 
         <v-btn text> Cancelar </v-btn>
@@ -315,8 +318,8 @@ export default {
 
   data: () => ({
 
-    url:'https://apiplanex.herokuapp.com',//heroku
-    //url:'http://127.0.0.1:5000',//local
+    //url:'https://apiplanex.herokuapp.com',//heroku
+    url:'http://127.0.0.1:5000',//local
     NReplicadas: 2,
     NRespostas:2,
     tela: 1,
@@ -613,6 +616,20 @@ export default {
     },
     check(prop){
       console.log(prop)
+    },
+    toName(prop){
+      let x = ""
+      for (const key in prop) {
+        if (Object.hasOwnProperty.call(prop, key)) {
+          const element = prop[key];
+          if (x == ""){
+            x += element
+          }else{
+            x +=","+ element
+            
+          }
+        }
+      }
     }
   },
   mounted() {	
