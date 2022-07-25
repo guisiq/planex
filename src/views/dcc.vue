@@ -263,8 +263,7 @@
         
         <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination :hide-default-footer="true">
           <template v-slot:[`item.resposta`]="props">
-
-            <v-checkbox v-model="props.resposta"></v-checkbox>
+            <v-checkbox v-model="props.item.resposta" v-on:change="check(props)" ></v-checkbox>
           </template>
         </v-data-table>
 
@@ -413,8 +412,12 @@ export default {
           "nome": "selecione uma resposta",
           "index": "0",
           "unidade": " "
-      }
-        ,
+    },
+    selectAnterior:{
+          "nome": "selecione uma resposta",
+          "index": "0",
+          "unidade": " "
+    },
     dsMatrix: [],
     dsTesteT:[],
     dssTesteT:[],
@@ -422,7 +425,7 @@ export default {
     dssTabAnova:[],
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
   }),
-  
+
   methods: {
     numberRule: (val) => {
       if (val < 0) return "insira um valor positivo ";
@@ -479,10 +482,9 @@ export default {
           }
 
           this.select = this.dsResposta[0];
+          this.selectAnterior = this.select; 
           this.dsTesteT = this.dssTesteT[this.select.index];
           this.headersTesteT = this.headerssTesteT[this.select.index];
-          console.log("dssTesteT:",this.dssTesteT);
-          console.log("this.dsResposta:",this.dsResposta );
         }
           break
 
@@ -495,11 +497,9 @@ export default {
             matrisY[element.index] = JSON.stringify(matrisY[element.index]);
             
             let matrisY1 =[];
-            
+            console.log("this.dssTesteT:",this.dssTesteT);
             matrisY1[element.index] = this.dssTesteT[element.index].map(v => [v.resposta == true ? 1:0]);
-            console.log("matrisY1[element.index]:",matrisY1[element.index]);
             matrisY1[element.index] = JSON.stringify(matrisY1[element.index]);
-            console.log("matrisY1[element.index]|stringify:",matrisY1[element.index]);
 
             axios
               .get(this.url+"/tab_anova/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY[element.index]+"/"+matrisY1[element.index])
@@ -516,7 +516,6 @@ export default {
                 });
               })
           }
-          console.log("dssTabAnova:",this.dssTabAnova)
           this.dsTabAnova = this.dssTabAnova[ this.select.index ];
       
           break
@@ -579,9 +578,15 @@ export default {
         });
     },
     mudarVariavel(){
+      console.log("this.dssTesteT:",this.dssTesteT);
+      console.log("this.dsTesteT:",this.dsTesteT);
+      // if (this.dsTesteT !== null && this.dsTesteT !== undefined && this.dsTesteT != []) {
+      //   this.dssTesteT[this.selectAnterior.index]= this.dsTesteT; 
+      // }
           this.dsTesteT = this.dssTesteT[this.select.index];
           this.headersTesteT = this.headerssTesteT[this.select.index];
           this.dsTabAnova = this.dssTabAnova[ this.select.index ];
+      this.selectAnterior = this.select
     },
     voltar() {
       if (this.tela > 1) {
@@ -606,6 +611,9 @@ export default {
     close() {
       console.log("Dialog closed");
     },
+    check(prop){
+      console.log(prop)
+    }
   },
   mounted() {	
 	},
@@ -650,9 +658,7 @@ export default {
           });
         }
       }
-      this.dsResposta.map(x => {
-        console.log("x:",x)
-      })
+
     },
     // select(){
 
