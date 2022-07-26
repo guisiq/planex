@@ -28,6 +28,7 @@
     <v-stepper-items>
       <!-- variaveis -->
       <v-stepper-content step="1">
+        <div id="container"></div>
         <v-card class="mb-12">
           <v-row>
             <v-col>
@@ -134,8 +135,8 @@
               Y<sub>{{ props.item.index }}</sub>
             </template>
             <template v-slot:[`item.nome`]="props">
-              <v-edit-dialog :return-value="props.item.nome" large persistent @save="save" @cancel="cancel"
-                @open="open" @close="close">
+              <v-edit-dialog :return-value="props.item.nome" large persistent @save="save" @cancel="cancel" @open="open"
+                @close="close">
                 <div>{{ props.item.nome }}</div>
                 <template v-slot:input>
                   <div class="mt-4 text-h6">atualizar nome</div>
@@ -197,26 +198,20 @@
       <v-stepper-content step="3">
         <v-card class="mb-12">
           <v-data-table :headers="headersMatrizX" :items="dsMatrix" disable-pagination :hide-default-footer="true">
-          
-            <template v-for="resposta in dsResposta"  v-slot:[resposta.attributeName3]="props">
-              <v-edit-dialog 
-                :key="resposta.index" 
-                :return-value.sync="props.item[resposta.attributeName]" 
-                large 
-                persistent 
-                @save="save" 
-                @cancel="cancel"
-                @open="open" 
-                @close="close">
+
+            <template v-for="resposta in dsResposta" v-slot:[resposta.attributeName3]="props">
+              <v-edit-dialog :key="resposta.index" :return-value.sync="props.item[resposta.attributeName]" large
+                persistent @save="save" @cancel="cancel" @open="open" @close="close">
                 <div>{{ props.item[resposta.attributeName] }}</div>
                 <template v-slot:input>
                   <div class="mt-4 text-h6">atualizar resposta</div>
-                  <v-text-field v-model.number="props.item[resposta.attributeName]" label="Edit" single-line counter autofocus>
+                  <v-text-field v-model.number="props.item[resposta.attributeName]" label="Edit" single-line counter
+                    autofocus>
                   </v-text-field>
                 </template>
               </v-edit-dialog>
             </template>
-          
+
           </v-data-table>
           <!--
             <div  v-for="resposta in dsResposta" :key="resposta.index" >
@@ -241,35 +236,48 @@
       <!-- teste T -->
       <v-stepper-content step="4">
         <v-card class="mb-12"></v-card>
-          <v-select
-            v-model="select"
-            :items="dsResposta"
-            item-text="index"
-            persistent-hint
-            return-object
-            single-line
-            v-on:change="mudarVariavel()"
-          >
-            <template slot="selection">
-              Y<sub> {{select.index}}</sub> - {{select.nome}}
-            </template>
-            <template v-slot:item="{item}">
-              Y<sub> {{item.index}}</sub> - {{item.nome}}
-            </template>
-            <template v-slot:option="item">
-              Y<sub> {{item.index}}</sub> - {{item.nome}}
-            </template>
-          </v-select>
-        
+        <v-select v-model="select" :items="dsResposta" item-text="index" persistent-hint return-object single-line
+          v-on:change="mudarVariavel()">
+          <template slot="selection">
+            Y<sub> {{ select.index }}</sub> - {{ select.nome }}
+          </template>
+          <template v-slot:item="{ item }">
+            Y<sub> {{ item.index }}</sub> - {{ item.nome }}
+          </template>
+          <template v-slot:option="item">
+            Y<sub> {{ item.index }}</sub> - {{ item.nome }}
+          </template>
+        </v-select>
+
         <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination :hide-default-footer="true">
           <template v-slot:[`item.resposta`]="props">
-            <v-checkbox v-model="props.item.resposta" v-on:change="check(props)" ></v-checkbox>
+            <v-checkbox v-model="props.item.resposta" v-on:change="check(props)"></v-checkbox>
           </template>
           <template v-slot:[`item.X`]="props">
-            X<sub> {{props.item.X}}</sub> 
+            <div v-if="props.item.X == 0"> media </div>
+            <div v-else>
+              <span v-for="item in props.item.X">X<sub> {{ item }}</sub> </span>
+            </div>
+
           </template>
         </v-data-table>
+        <!-- funcao de regrecao  -->
+        <div>
+          <span> Y<sub> {{ select.index }}</sub> = </span>
+          <span v-for="item in dsTesteT ">
 
+            <span v-if="item.X == 0">
+              {{ item.B }}
+            </span>
+
+            <span v-else="item.X == 0 ">
+              {{ item.B }}
+              <span v-for="item in item.X">X<sub> {{ item }}</sub> </span>
+            </span>
+            {{ check(item) }}
+            <span v-if="item.index <= dsTesteT.length - 2"> + </span>
+          </span>
+        </div>
         <v-btn text> Cancelar </v-btn>
 
         <v-btn @click="voltar"> Voltar </v-btn>
@@ -278,27 +286,21 @@
       <!-- TabAnova -->
       <v-stepper-content step="5">
         <v-card class="mb-12"></v-card>
-                  <v-select
-            v-model="select"
-            :items="dsResposta"
-            item-text="index"
-            persistent-hint
-            return-object
-            single-line
-            v-on:change="mudarVariavel()"
-          >
-            <template slot="selection">
-              Y<sub> {{select.index}}</sub> - {{select.nome}}
-            </template>
-            <template v-slot:item="{item}">
-              Y<sub> {{item.index}}</sub> - {{item.nome}}
-            </template>
-            <template v-slot:option="item">
-              Y<sub> {{item.index}}</sub> - {{item.nome}}
-            </template>
-          </v-select>
+        <v-select v-model="select" :items="dsResposta" item-text="index" persistent-hint return-object single-line
+          v-on:change="mudarVariavel()">
+          <template slot="selection">
+            Y<sub> {{ select.index }}</sub> - {{ select.nome }}
+          </template>
+          <template v-slot:item="{ item }">
+            Y<sub> {{ item.index }}</sub> - {{ item.nome }}
+          </template>
+          <template v-slot:option="item">
+            Y<sub> {{ item.index }}</sub> - {{ item.nome }}
+          </template>
+        </v-select>
         <v-data-table :headers="headersTabAnova" :items="dsTabAnova" disable-pagination :hide-default-footer="true">
         </v-data-table>
+        
         <!-- <span>Y = <span v-for="(item, index) in dsTesteT" >{{item.be}}</span></span> -->
         <v-btn @click="voltar"> Voltar </v-btn>
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
@@ -308,7 +310,9 @@
 </template>
 
 <script>
-  import axios from "axios";
+import Highcharts from 'highcharts'
+import axios from "axios";
+import { linear } from 'vuetify/lib/services/goto/easing-patterns';
 export default {
   // https://codepen.io/duq/pen/PegPrJ
   // https://thewebdev.info/2020/08/15/vuetify%E2%80%8A-%E2%80%8Aedit-table-content/
@@ -319,9 +323,9 @@ export default {
   data: () => ({
 
     //url:'https://apiplanex.herokuapp.com',//heroku
-    url:'http://127.0.0.1:5000',//local
+    url: 'http://127.0.0.1:5000',//local
     NReplicadas: 2,
-    NRespostas:2,
+    NRespostas: 2,
     tela: 1,
     Nvariaveis: 2,
     snack: false,
@@ -382,50 +386,127 @@ export default {
     headersMatrizX: [],
     headersTesteT: [],
     headerssTesteT: [],
-    headersTabAnova:[],
+    headersTabAnova: [],
     dsVariaveis: [
-        {
-            "nome": "",
-            "index": "1",
-            "unidade": " ",
-            "vBaixo": -1,
-            "vAlto": 1
-        },
-        {
-            "nome": "",
-            "index": "2",
-            "unidade": " ",
-            "vBaixo": -1,
-            "vAlto": 1
-        }
+      {
+        "nome": "",
+        "index": "1",
+        "unidade": " ",
+        "vBaixo": -1,
+        "vAlto": 1
+      },
+      {
+        "nome": "",
+        "index": "2",
+        "unidade": " ",
+        "vBaixo": -1,
+        "vAlto": 1
+      }
     ],
     dsResposta: [
-        {
-            "nome": "_",
-            "index": "1",
-            "unidade": "_"
-        },
-        {
-            "nome": "_",
-            "index": "2",
-            "unidade": "_"
-        }
+      {
+        "nome": "_",
+        "index": "1",
+        "unidade": "_"
+      },
+      {
+        "nome": "_",
+        "index": "2",
+        "unidade": "_"
+      }
     ],
-    select:{
-          "nome": "selecione uma resposta",
-          "index": "0",
-          "unidade": " "
+    select: {
+      "nome": "selecione uma resposta",
+      "index": "0",
+      "unidade": " "
     },
-    selectAnterior:{
-          "nome": "selecione uma resposta",
-          "index": "0",
-          "unidade": " "
+    selectAnterior: {
+      "nome": "selecione uma resposta",
+      "index": "0",
+      "unidade": " "
     },
     dsMatrix: [],
-    dsTesteT:[],
-    dssTesteT:[],
-    dsTabAnova:[],
-    dssTabAnova:[],
+    dsTesteT: [],
+    dssTesteT: [],
+    dsTabAnova: [],
+    dssTabAnova: [],
+    opitionChart1: {
+            chart: {
+              zoomType: 'xy'
+            },
+            title: {
+              text: 'Valores Experimentais × Preditos'
+            },
+            // subtitle: {
+            //   text: 'Source: Heinz  2003'
+            // },
+            xAxis: {
+              title: {
+                enabled: true,
+                text: 'valor experimental'
+              },
+              
+              // startOnTick: true,
+              // endOnTick: true,
+              // showLastLabel: true
+            },
+            yAxis: {
+              type:linear,
+              width:10,
+              alignTicks:false,
+              title: {
+                text: 'valor predito'
+              }
+            },
+            legend: {
+              layout: 'vertical',
+              align: 'left',
+              verticalAlign: 'top',
+              x: 100,
+              y: 70,
+              floating: true,
+              backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
+              borderWidth: 1
+            },
+            plotOptions: {
+              scatter: {
+                marker: {
+                  radius: 5,
+                  states: {
+                    hover: {
+                      enabled: true,
+                      lineColor: 'rgb(100,100,100)'
+                    }
+                  }
+                },
+                states: {
+                  hover: {
+                    marker: {
+                      enabled: false
+                    }
+                  }
+                },
+                tooltip: {
+                  pointFormat: '{point.x} experimental , {point.y} predito'
+                }
+              }
+            },
+            series: [{
+              type: 'scatter',
+              color: 'rgba(223, 83, 83, .5)',
+              data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6]]
+
+            }, {
+              type: 'line',
+              name: 'linha base',
+              marker: {
+                    enabled: false
+                },
+              enableMouseTracking: false,
+              color: 'rgba(119, 152, 191, .5)',
+              data: [[0, 0], [200, 200]]
+            }]
+          },
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
   }),
 
@@ -441,7 +522,7 @@ export default {
           console.log(this);
           break;
 
-        case 3:{
+        case 3: {
 
           for (let index = 0; index < this.dsResposta.length; index++) {
             const element = this.dsResposta[index];
@@ -485,7 +566,7 @@ export default {
           }
 
           this.select = this.dsResposta[0];
-          this.selectAnterior = this.select; 
+          this.selectAnterior = this.select;
           this.dsTesteT = this.dssTesteT[this.select.index];
           this.headersTesteT = this.headerssTesteT[this.select.index];
         }
@@ -495,20 +576,20 @@ export default {
           for (let index = 0; index < this.dsResposta.length; index++) {
             const element = this.dsResposta[index];
             let matrisY = [];
-            
+
             matrisY[element.index] = this.dsMatrix.map(v => [v[element.attributeName]]);
             matrisY[element.index] = JSON.stringify(matrisY[element.index]);
-            
-            let matrisY1 =[];
-            console.log("this.dssTesteT:",this.dssTesteT);
-            matrisY1[element.index] = this.dssTesteT[element.index].map(v => [v.resposta == true ? 1:0]);
+
+            let matrisY1 = [];
+            console.log("this.dssTesteT:", this.dssTesteT);
+            matrisY1[element.index] = this.dssTesteT[element.index].map(v => [v.resposta == true ? 1 : 0]);
             matrisY1[element.index] = JSON.stringify(matrisY1[element.index]);
 
             axios
-              .get(this.url+"/tab_anova/"+this.Nvariaveis+"/"+this.NReplicadas+"/"+matrisY[element.index]+"/"+matrisY1[element.index])
+              .get(this.url + "/tab_anova/" + this.Nvariaveis + "/" + this.NReplicadas + "/" + matrisY[element.index] + "/" + matrisY1[element.index])
               .then(resp => {
                 this.dssTabAnova[element.index] = resp.data.data
-                
+
                 this.headersTabAnova = resp.data.schema.fields.map(f => {
                   return {
                     text: f.name,
@@ -519,8 +600,23 @@ export default {
                 });
               })
           }
-          this.dsTabAnova = this.dssTabAnova[ this.select.index ];
-      
+          this.dsTabAnova = this.dssTabAnova[this.select.index];
+          
+          const element = this.dsResposta[this.select.index];
+          let matrisY ;
+          matrisY = this.dsMatrix
+                              .map(v => [v[element.attributeName]])
+                              .map(x => {
+                                let valorPredito;
+                                valorPredito = this.dsMatrix[0].B 
+                                for (let index = 1; index < this.dsMatrix.length; index++ ) {
+                                  const element = this.dsMatrix[index];
+                                  valorPredito += element.B*(matrisX) 
+                                }
+                                [x, ]
+                                });
+
+          this.opitionChart1.series.data= this.
           break
         default:
           break;
@@ -531,64 +627,64 @@ export default {
       }
 
     },
-    definirmarty(){
+    definirmarty() {
 
     },
-    definirMatx(){
+    definirMatx() {
       axios
-        .get(this.url+"/matrix/" + this.Nvariaveis + "/" + this.NReplicadas)
+        .get(this.url + "/matrix/" + this.Nvariaveis + "/" + this.NReplicadas)
         .then((resp) => {
           let variaveis = resp.data.slice(1, this.Nvariaveis + 1);
-          
+
           let variaveisEstruct = []
 
           for (let i = 0; i < variaveis[0].length; i++) {
             variaveisEstruct.push(new Object);
           }
-            this.headersMatrizX = [];
+          this.headersMatrizX = [];
           for (let e = 0; e < variaveis.length; e++) {
             this.headersMatrizX.push({
-                  text:"("+this.dsVariaveis[e].index+") "+ this.dsVariaveis[e].nome,
-                  align: "start",
-                  sortable: false,
-                  value: this.dsVariaveis[e].index,
-                }
-              )
+              text: "(" + this.dsVariaveis[e].index + ") " + this.dsVariaveis[e].nome,
+              align: "start",
+              sortable: false,
+              value: this.dsVariaveis[e].index,
+            }
+            )
           }
-        
+
 
 
           for (let i = 0; i < variaveisEstruct.length; i++) {
             for (let e = 0; e < variaveis.length; e++) {
               variaveisEstruct[i][this.dsVariaveis[e].index] = variaveis[e][i];
             }
-            for(let e = 0; e < this.dsResposta.length; e++){
-              variaveisEstruct[i]["resposta"+this.dsResposta[e].index] = 0;
+            for (let e = 0; e < this.dsResposta.length; e++) {
+              variaveisEstruct[i]["resposta" + this.dsResposta[e].index] = 0;
             }
           }
-          for(let e = 0; e < this.dsResposta.length; e++){
-              this.headersMatrizX.push({
-                  text: "resposta "+this.dsResposta[e].index,
-                  align: "start",
-                  sortable: false,
-                  value: "resposta"+this.dsResposta[e].index,
-                }
-              )
-              this.dsResposta[e].attributeName = `resposta`+this.dsResposta[e].index
-              this.dsResposta[e].attributeName3 = `item.resposta`+this.dsResposta[e].index
+          for (let e = 0; e < this.dsResposta.length; e++) {
+            this.headersMatrizX.push({
+              text: "resposta " + this.dsResposta[e].index,
+              align: "start",
+              sortable: false,
+              value: "resposta" + this.dsResposta[e].index,
             }
+            )
+            this.dsResposta[e].attributeName = `resposta` + this.dsResposta[e].index
+            this.dsResposta[e].attributeName3 = `item.resposta` + this.dsResposta[e].index
+          }
           this.dsMatrix = variaveisEstruct;
         });
     },
-    mudarVariavel(){
-      console.log("this.dssTesteT:",this.dssTesteT);
-      console.log("this.dsTesteT:",this.dsTesteT);
+    mudarVariavel() {
+      console.log("this.dssTesteT:", this.dssTesteT);
+      console.log("this.dsTesteT:", this.dsTesteT);
       // if (this.dsTesteT !== null && this.dsTesteT !== undefined && this.dsTesteT != []) {
       //   this.dssTesteT[this.selectAnterior.index]= this.dsTesteT; 
       // }
-          this.dsTesteT = this.dssTesteT[this.select.index];
-          this.headersTesteT = this.headerssTesteT[this.select.index];
-          this.dsTabAnova = this.dssTabAnova[ this.select.index ];
+      this.dsTesteT = this.dssTesteT[this.select.index];
+      this.headersTesteT = this.headerssTesteT[this.select.index];
+      this.dsTabAnova = this.dssTabAnova[this.select.index];
       this.selectAnterior = this.select
     },
     voltar() {
@@ -614,29 +710,30 @@ export default {
     close() {
       console.log("Dialog closed");
     },
-    check(prop){
+    check(prop) {
       console.log(prop)
     },
-    toName(prop){
+    toName(prop) {
       let x = ""
       for (const key in prop) {
         if (Object.hasOwnProperty.call(prop, key)) {
           const element = prop[key];
-          if (x == ""){
+          if (x == "") {
             x += element
-          }else{
-            x +=","+ element
-            
+          } else {
+            x += "," + element
+
           }
         }
       }
     }
   },
-  mounted() {	
-	},
+  mounted() {
+    Highcharts.chart('container', this.opitionChart1 )
+  },
   watch: {
     Nvariaveis() {
-     
+
       if (this.dsVariaveis.length == this.Nvariaveis) {
         return;
       } else if (this.dsVariaveis.length > this.Nvariaveis) {
@@ -644,11 +741,11 @@ export default {
           this.dsVariaveis.splice(this.dsVariaveis.length - 1, 1);
         }
       } else if (this.dsVariaveis.length < this.Nvariaveis) {
-     
+
         while (this.dsVariaveis.length != this.Nvariaveis) {
           this.dsVariaveis.push({
             nome: "",
-            index:  "" + (this.dsVariaveis.length+1),
+            index: "" + (this.dsVariaveis.length + 1),
             unidade: " ",
             vBaixo: -1.0,
             vAlto: 1.0,
@@ -657,7 +754,7 @@ export default {
       }
     },
     NRespostas() {
-     
+
       if (this.dsResposta.length == this.NRespostas) {
         return;
       } else if (this.dsResposta.length > this.NRespostas) {
@@ -665,21 +762,19 @@ export default {
           this.dsResposta.splice(this.dsResposta.length - 1, 1);
         }
       } else if (this.dsResposta.length < this.NRespostas) {
-     
+
         while (this.dsResposta.length != this.NRespostas) {
           this.dsResposta.push({
             nome: "_",
-            index: ""+(this.dsResposta.length+1),
+            index: "" + (this.dsResposta.length + 1),
             unidade: "_",
-        
+
           });
         }
       }
 
     },
-    // select(){
-
-    // }
+  
   },
 };
 </script>
