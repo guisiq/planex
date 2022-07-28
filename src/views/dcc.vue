@@ -1,27 +1,14 @@
 <template>
   <v-stepper v-model="tela">
     <v-stepper-header>
-      <v-stepper-step :complete="tela > 1" step="1">
-        Variaveis
-      </v-stepper-step>
-
+      <v-stepper-step :complete="tela > 1" step="1"> Variaveis </v-stepper-step>
       <v-divider></v-divider>
-
-      <v-stepper-step :complete="tela > 2" step="2">
-        Respostas
-      </v-stepper-step>
-
+      <v-stepper-step :complete="tela > 2" step="2"> Respostas </v-stepper-step>
       <v-divider></v-divider>
-      <v-stepper-step :complete="tela > 3" step="3">
-        resultados
-      </v-stepper-step>
-
+      <v-stepper-step :complete="tela > 3" step="3"> resultados </v-stepper-step>
       <v-divider></v-divider>
-
       <v-stepper-step :complete="tela > 4" step="4"> Teste T </v-stepper-step>
-
       <v-divider></v-divider>
-
       <v-stepper-step :complete="tela > 5" step="5"> Tabela de Anova </v-stepper-step>
     </v-stepper-header>
 
@@ -251,7 +238,7 @@
 
         <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination :hide-default-footer="true">
           <template v-slot:[`item.resposta`]="props">
-            <v-checkbox v-model="props.item.resposta" v-on:change="check(props)"></v-checkbox>
+            <v-checkbox v-model="props.item.resposta" ></v-checkbox>
           </template>
           <template v-slot:[`item.X`]="props">
             <div v-if="props.item.X == 0"> media </div>
@@ -274,7 +261,6 @@
               {{ item.B }}
               <span v-for="item in item.X">X<sub> {{ item }}</sub> </span>
             </span>
-            {{ check(item) }}
             <span v-if="item.index <= dsTesteT.length - 2"> + </span>
           </span>
         </div>
@@ -285,6 +271,8 @@
       </v-stepper-content>
       <!-- TabAnova -->
       <v-stepper-content step="5">
+         <div id="container1"></div>
+         <div id="container2"></div>
         <v-card class="mb-12"></v-card>
         <v-select v-model="select" :items="dsResposta" item-text="index" persistent-hint return-object single-line
           v-on:change="mudarVariavel()">
@@ -313,6 +301,12 @@
 import Highcharts from 'highcharts'
 import axios from "axios";
 import { linear } from 'vuetify/lib/services/goto/easing-patterns';
+
+import { create, all } from 'mathjs'
+
+
+//import matrix from 'matrix-js'
+
 export default {
   // https://codepen.io/duq/pen/PegPrJ
   // https://thewebdev.info/2020/08/15/vuetify%E2%80%8A-%E2%80%8Aedit-table-content/
@@ -426,6 +420,7 @@ export default {
       "unidade": " "
     },
     dsMatrix: [],
+    MatrixDecode: [],
     dsTesteT: [],
     dssTesteT: [],
     dsTabAnova: [],
@@ -498,13 +493,13 @@ export default {
 
             }, {
               type: 'line',
-              name: 'linha base',
+              name: 'linha de regressao ',
               marker: {
                     enabled: false
                 },
               enableMouseTracking: false,
               color: 'rgba(119, 152, 191, .5)',
-              data: [[0, 0], [200, 200]]
+              data: [[0, 0], [1, 1]]
             }]
           },
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
@@ -519,7 +514,6 @@ export default {
       switch (this.tela) {
         case 2:
           this.definirMatx();
-          console.log(this);
           break;
 
         case 3: {
@@ -581,7 +575,6 @@ export default {
             matrisY[element.index] = JSON.stringify(matrisY[element.index]);
 
             let matrisY1 = [];
-            console.log("this.dssTesteT:", this.dssTesteT);
             matrisY1[element.index] = this.dssTesteT[element.index].map(v => [v.resposta == true ? 1 : 0]);
             matrisY1[element.index] = JSON.stringify(matrisY1[element.index]);
 
@@ -600,23 +593,28 @@ export default {
                 });
               })
           }
+          const config = { }
+          const math = create(all, config)
           this.dsTabAnova = this.dssTabAnova[this.select.index];
           
-          const element = this.dsResposta[this.select.index];
-          let matrisY ;
-          matrisY = this.dsMatrix
-                              .map(v => [v[element.attributeName]])
-                              .map(x => {
-                                let valorPredito;
-                                valorPredito = this.dsMatrix[0].B 
-                                for (let index = 1; index < this.dsMatrix.length; index++ ) {
-                                  const element = this.dsMatrix[index];
-                                  valorPredito += element.B*(matrisX) 
-                                }
-                                [x, ]
-                                });
+          const element = this.dsResposta[parseInt(this.select.index)-1];
+          console.log("this.select.index:",this.select.index)
+          console.log("this.dsResposta:",this.dsResposta)
+          console.log("element:",element)
+          console.log("this.dsTesteT.map(x => x.B)",this.dsTesteT.map(x => x.B))
+          console.log("this.dsTesteT.map(x => [x.B])",this.dsTesteT.map(x => [x.B]))
+          console.log("this.MatrixDecode",this.MatrixDecode)
+          let matrisY = this.dsMatrix.map(v => [v[element.attributeName]]);
+          let matrisY_ = math.multiply(math.transpose(this.MatrixDecode),this.dsTesteT.map(x => [x.B])) 
+          console.log("predicao:",matrisY_)
+          console.log("real:",matrisY)
+          console.log("concatenmacao dim 1:",math.concat( matrisY_,matrisY ))
+          console.log("concatenmacao dim 1:",math.concat( matrisY_,matrisY,1 ))
+          console.log("concatenmacao dim 0:",math.concat( matrisY_,matrisY,0 ))
 
-          this.opitionChart1.series.data= this.
+          this.opitionChart1.series[0].data =math.concat(matrisY,matrisY_ )
+          Highcharts.chart('container1', this.opitionChart1 )
+          Highcharts.chart('container2', this.opitionChart1 )
           break
         default:
           break;
@@ -627,15 +625,13 @@ export default {
       }
 
     },
-    definirmarty() {
-
-    },
     definirMatx() {
       axios
         .get(this.url + "/matrix/" + this.Nvariaveis + "/" + this.NReplicadas)
         .then((resp) => {
+          // DEFININDO TABELA PARA CALCULOS
+          this.MatrixDecode = resp.data;
           let variaveis = resp.data.slice(1, this.Nvariaveis + 1);
-
           let variaveisEstruct = []
 
           for (let i = 0; i < variaveis[0].length; i++) {
@@ -677,8 +673,6 @@ export default {
         });
     },
     mudarVariavel() {
-      console.log("this.dssTesteT:", this.dssTesteT);
-      console.log("this.dsTesteT:", this.dsTesteT);
       // if (this.dsTesteT !== null && this.dsTesteT !== undefined && this.dsTesteT != []) {
       //   this.dssTesteT[this.selectAnterior.index]= this.dsTesteT; 
       // }
@@ -726,7 +720,7 @@ export default {
           }
         }
       }
-    }
+    },
   },
   mounted() {
     Highcharts.chart('container', this.opitionChart1 )
