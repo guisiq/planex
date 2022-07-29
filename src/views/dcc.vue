@@ -238,7 +238,7 @@
 
         <v-data-table :headers="headersTesteT" :items="dsTesteT" disable-pagination :hide-default-footer="true">
           <template v-slot:[`item.resposta`]="props">
-            <v-checkbox v-model="props.item.resposta" ></v-checkbox>
+            <v-checkbox v-model="props.item.resposta"></v-checkbox>
           </template>
           <template v-slot:[`item.X`]="props">
             <div v-if="props.item.X == 0"> media </div>
@@ -271,8 +271,8 @@
       </v-stepper-content>
       <!-- TabAnova -->
       <v-stepper-content step="5">
-         <div id="container1"></div>
-         <div id="container2"></div>
+        <div id="container1"></div>
+        <div id="container2"></div>
         <v-card class="mb-12"></v-card>
         <v-select v-model="select" :items="dsResposta" item-text="index" persistent-hint return-object single-line
           v-on:change="mudarVariavel()">
@@ -288,7 +288,7 @@
         </v-select>
         <v-data-table :headers="headersTabAnova" :items="dsTabAnova" disable-pagination :hide-default-footer="true">
         </v-data-table>
-        
+
         <!-- <span>Y = <span v-for="(item, index) in dsTesteT" >{{item.be}}</span></span> -->
         <v-btn @click="voltar"> Voltar </v-btn>
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
@@ -299,6 +299,8 @@
 
 <script>
 import Highcharts from 'highcharts'
+import pareto from 'highcharts/modules/pareto';
+
 import axios from "axios";
 import { linear } from 'vuetify/lib/services/goto/easing-patterns';
 
@@ -425,83 +427,136 @@ export default {
     dssTesteT: [],
     dsTabAnova: [],
     dssTabAnova: [],
+    opitionChart2: {
+      chart: {
+        renderTo: 'container2',
+        type: 'column'
+      },
+      title: {
+        text: 'efeitos padronizado'
+      },
+      tooltip: {
+        shared: true
+      },
+      xAxis: {
+        categories: [
+          'media',"x1","x2"
+        ],
+        crosshair: true
+      },
+      yAxis: [{
+        title: {
+          text: ''
+        }
+      }, {
+        title: {
+          text: ''
+        },
+        minPadding: 0,
+        maxPadding: 0,
+        max: 100,
+        min: 0,
+        opposite: true,
+        labels: {
+          format: "{value}%"
+        }
+      }
+      ],
+      series: [{
+        type: 'pareto',
+        name: 'p valor',
+        yAxis: 1,
+        zIndex: 10,
+        baseSeries: 1,
+        tooltip: {
+          valueDecimals: 2,
+        },
+        data:[755, 222, 151]
+      }, {
+        name: 'T calculado',
+        type: 'column',
+        zIndex: 2,
+        data: [51, 36, 10]
+      }]
+    },
     opitionChart1: {
-            chart: {
-              zoomType: 'xy'
-            },
-            title: {
-              text: 'Valores Experimentais × Preditos'
-            },
-            // subtitle: {
-            //   text: 'Source: Heinz  2003'
-            // },
-            xAxis: {
-              title: {
-                enabled: true,
-                text: 'valor experimental'
-              },
-              
-              // startOnTick: true,
-              // endOnTick: true,
-              // showLastLabel: true
-            },
-            yAxis: {
-              type:linear,
-              width:10,
-              alignTicks:false,
-              title: {
-                text: 'valor predito'
-              }
-            },
-            legend: {
-              layout: 'vertical',
-              align: 'left',
-              verticalAlign: 'top',
-              x: 100,
-              y: 70,
-              floating: true,
-              backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
-              borderWidth: 1
-            },
-            plotOptions: {
-              scatter: {
-                marker: {
-                  radius: 5,
-                  states: {
-                    hover: {
-                      enabled: true,
-                      lineColor: 'rgb(100,100,100)'
-                    }
-                  }
-                },
-                states: {
-                  hover: {
-                    marker: {
-                      enabled: false
-                    }
-                  }
-                },
-                tooltip: {
-                  pointFormat: '{point.x} experimental , {point.y} predito'
-                }
-              }
-            },
-            series: [{
-              type: 'scatter',
-              color: 'rgba(223, 83, 83, .5)',
-              data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6]]
+      chart: {
+        zoomType: 'xy'
+      },
+      title: {
+        text: 'Valores Experimentais × Preditos'
+      },
+      // subtitle: {
+      //   text: 'Source: Heinz  2003'
+      // },
+      xAxis: {
+        title: {
+          enabled: true,
+          text: 'valor experimental'
+        },
 
-            }, {
-              type: 'line',
-              name: 'linha de regressao ',
-              marker: {
-                    enabled: false
-                },
-              enableMouseTracking: false,
-              color: 'rgba(119, 152, 191, .5)',
-              data: [[0, 0], [1, 1]]
-            }]
+        // startOnTick: true,
+        // endOnTick: true,
+        // showLastLabel: true
+      },
+      yAxis: {
+        type: linear,
+        width: 10,
+        alignTicks: false,
+        title: {
+          text: 'valor predito'
+        }
+      },
+      legend: {
+        layout: 'vertical',
+        align: 'left',
+        verticalAlign: 'top',
+        x: 100,
+        y: 70,
+        floating: true,
+        backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
+        borderWidth: 1
+      },
+      plotOptions: {
+        scatter: {
+          marker: {
+            radius: 5,
+            states: {
+              hover: {
+                enabled: true,
+                lineColor: 'rgb(100,100,100)'
+              }
+            }
           },
+          states: {
+            hover: {
+              marker: {
+                enabled: false
+              }
+            }
+          },
+          tooltip: {
+            pointFormat: '{point.x} experimental , {point.y} predito'
+          }
+        }
+      },
+      series: [{
+        type: 'scatter',
+        color: 'rgba(223, 83, 83, .5)',
+        data: [[161.2, 51.6], [167.5, 59.0], [159.5, 49.2], [157.0, 63.0], [155.8, 53.6]]
+
+      }, {
+        type: 'line',
+        name: 'linha de regressao ',
+        marker: {
+          enabled: false
+        },
+        enableMouseTracking: false,
+        color: 'rgba(119, 152, 191, .5)',
+        data: [[0, 0], [1, 1]]
+      }]
+    },
+    regressaoChat: null,
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
   }),
 
@@ -593,28 +648,30 @@ export default {
                 });
               })
           }
-          const config = { }
+          const config = {}
           const math = create(all, config)
           this.dsTabAnova = this.dssTabAnova[this.select.index];
-          
-          const element = this.dsResposta[parseInt(this.select.index)-1];
-          console.log("this.select.index:",this.select.index)
-          console.log("this.dsResposta:",this.dsResposta)
-          console.log("element:",element)
-          console.log("this.dsTesteT.map(x => x.B)",this.dsTesteT.map(x => x.B))
-          console.log("this.dsTesteT.map(x => [x.B])",this.dsTesteT.map(x => [x.B]))
-          console.log("this.MatrixDecode",this.MatrixDecode)
-          let matrisY = this.dsMatrix.map(v => [v[element.attributeName]]);
-          let matrisY_ = math.multiply(math.transpose(this.MatrixDecode),this.dsTesteT.map(x => [x.B])) 
-          console.log("predicao:",matrisY_)
-          console.log("real:",matrisY)
-          console.log("concatenmacao dim 1:",math.concat( matrisY_,matrisY ))
-          console.log("concatenmacao dim 1:",math.concat( matrisY_,matrisY,1 ))
-          console.log("concatenmacao dim 0:",math.concat( matrisY_,matrisY,0 ))
 
-          this.opitionChart1.series[0].data =math.concat(matrisY,matrisY_ )
-          Highcharts.chart('container1', this.opitionChart1 )
-          Highcharts.chart('container2', this.opitionChart1 )
+          const element = this.dsResposta[parseInt(this.select.index) - 1];
+          // console.log("this.select.index:", this.select.index)
+          // console.log("this.dsResposta:", this.dsResposta)
+          // console.log("element:", element)
+          // console.log("this.dsTesteT.map(x => x.B)", this.dsTesteT.map(x => x.B))
+          // console.log("this.dsTesteT.map(x => [x.B])", this.dsTesteT.map(x => [x.B]))
+          // console.log("this.MatrixDecode", this.MatrixDecode)
+          let matrisY = this.dsMatrix.map(v => [v[element.attributeName]]);
+          let matrisY_ = math.multiply(math.transpose(this.MatrixDecode), this.dsTesteT.map(x => [x.B]))
+          // console.log("predicao:", matrisY_)
+          // console.log("real:", matrisY)
+          // console.log("concatenmacao dim 1:", math.concat(matrisY_, matrisY))
+          // console.log("concatenmacao dim 1:", math.concat(matrisY_, matrisY, 1))
+          // console.log("concatenmacao dim 0:", math.concat(matrisY_, matrisY, 0))
+
+          this.opitionChart1.series[0].data = math.concat(matrisY, matrisY_)
+          this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
+          console.log("grafico 1 foi ")
+
+          this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
           break
         default:
           break;
@@ -723,7 +780,9 @@ export default {
     },
   },
   mounted() {
-    Highcharts.chart('container', this.opitionChart1 )
+    pareto(Highcharts);
+
+    Highcharts.chart('container', this.opitionChart1)
   },
   watch: {
     Nvariaveis() {
@@ -768,7 +827,7 @@ export default {
       }
 
     },
-  
+
   },
 };
 </script>
