@@ -428,10 +428,6 @@ export default {
     dsTabAnova: [],
     dssTabAnova: [],
     opitionChart2: {
-      chart: {
-        renderTo: 'container2',
-        type: 'column'
-      },
       title: {
         text: 'efeitos padronizado'
       },
@@ -444,38 +440,31 @@ export default {
         ],
         crosshair: true
       },
-      yAxis: [{
-        title: {
-          text: ''
-        }
-      }, {
-        title: {
-          text: ''
+      yAxis:  [{
+          title: {
+            text: 'T calculado'
+          },
+          min: 0,
         },
-        minPadding: 0,
-        maxPadding: 0,
-        max: 100,
-        min: 0,
-        opposite: true,
-        labels: {
-          format: "{value}%"
+        {
+          title: {
+            text: 'p-valor'
+          },
+          max: 1,
         }
-      }
-      ],
+      ]
+      ,
       series: [{
         type: 'pareto',
         name: 'p valor',
         yAxis: 1,
         zIndex: 10,
         baseSeries: 1,
-        tooltip: {
-          valueDecimals: 2,
-        },
-        data:[755, 222, 151]
+        data:[55, 22, 51]
       }, {
+        yAxis: 0,
         name: 'T calculado',
         type: 'column',
-        zIndex: 2,
         data: [51, 36, 10]
       }]
     },
@@ -500,7 +489,7 @@ export default {
         // showLastLabel: true
       },
       yAxis: {
-        type: linear,
+        type: "linear",
         width: 10,
         alignTicks: false,
         title: {
@@ -648,30 +637,8 @@ export default {
                 });
               })
           }
-          const config = {}
-          const math = create(all, config)
-          this.dsTabAnova = this.dssTabAnova[this.select.index];
+          this.updateChat()
 
-          const element = this.dsResposta[parseInt(this.select.index) - 1];
-          // console.log("this.select.index:", this.select.index)
-          // console.log("this.dsResposta:", this.dsResposta)
-          // console.log("element:", element)
-          // console.log("this.dsTesteT.map(x => x.B)", this.dsTesteT.map(x => x.B))
-          // console.log("this.dsTesteT.map(x => [x.B])", this.dsTesteT.map(x => [x.B]))
-          // console.log("this.MatrixDecode", this.MatrixDecode)
-          let matrisY = this.dsMatrix.map(v => [v[element.attributeName]]);
-          let matrisY_ = math.multiply(math.transpose(this.MatrixDecode), this.dsTesteT.map(x => [x.B]))
-          // console.log("predicao:", matrisY_)
-          // console.log("real:", matrisY)
-          // console.log("concatenmacao dim 1:", math.concat(matrisY_, matrisY))
-          // console.log("concatenmacao dim 1:", math.concat(matrisY_, matrisY, 1))
-          // console.log("concatenmacao dim 0:", math.concat(matrisY_, matrisY, 0))
-
-          this.opitionChart1.series[0].data = math.concat(matrisY, matrisY_)
-          this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
-          console.log("grafico 1 foi ")
-
-          this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
           break
         default:
           break;
@@ -737,6 +704,7 @@ export default {
       this.headersTesteT = this.headerssTesteT[this.select.index];
       this.dsTabAnova = this.dssTabAnova[this.select.index];
       this.selectAnterior = this.select
+      this.updateChat()
     },
     voltar() {
       if (this.tela > 1) {
@@ -766,23 +734,50 @@ export default {
     },
     toName(prop) {
       let x = ""
-      for (const key in prop) {
-        if (Object.hasOwnProperty.call(prop, key)) {
-          const element = prop[key];
-          if (x == "") {
-            x += element
-          } else {
-            x += "," + element
-
-          }
-        }
-      }
+      prop.forEach(element => {
+        x += "X" +element+" "
+      });
+      return x
     },
+    updateChat(){
+      const config = {}
+      const math = create(all, config)
+      this.dsTabAnova = this.dssTabAnova[this.select.index];
+
+      const element = this.dsResposta[parseInt(this.select.index) - 1];
+    
+      let matrisY = this.dsMatrix.map(v => [v[element.attributeName]]);
+      let matrisY_ = math.multiply(math.transpose(this.MatrixDecode), this.dsTesteT.map(x => [x.B]))
+
+      this.opitionChart1.series[0].data = math.concat(matrisY, matrisY_)
+      let max = Math.max(math.concat(matrisY, matrisY_))
+      max = max >= 0?1.1*max:1; 
+      this.opitionChart1.series[1].data = [[0,0], [max,max]]
+    
+      console.log("grafico 1 foi ")
+
+
+      this.opitionChart2.xAxis.categories = this.dsTesteT.map( x => x.X == 0 ? "media":this.toName(x.X))
+      this.opitionChart2.series[0].data= this.dsTesteT.map( x => x["p-valor"])
+      this.opitionChart2.series[1].data= this.dsTesteT.map( x => x["t[(B - H0)/er]"])
+
+      
+      //console.log(this.regressaoChat1)
+      this.regressaoChat.update(this.opitionChart1);
+    
+      this.regressaoChat2.update(this.opitionChart2);
+      console.log("this.regressaoChat2:",this.regressaoChat2)
+      console.log("this.regressaoChat:",this.regressaoChat)
+      console.log("this.regressaoChat.options:",this.regressaoChat.options)
+      console.log("this.regressaoChat2.options:",this.regressaoChat2.options)
+     
+
+    }
   },
   mounted() {
     pareto(Highcharts);
-
-    Highcharts.chart('container', this.opitionChart1)
+    this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
+    this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
   },
   watch: {
     Nvariaveis() {
