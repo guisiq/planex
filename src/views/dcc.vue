@@ -318,7 +318,7 @@ export default {
 
   data: () => ({
 
-    //url:'https://apiplanex.herokuapp.com',//heroku
+    url:'https://apiplanex.herokuapp.com',//heroku
     url: 'http://127.0.0.1:5000',//local
     NReplicadas: 2,
     NRespostas: 2,
@@ -455,21 +455,20 @@ export default {
       ]
       ,
       series: [{
-        type: 'pareto',
+        type: 'line',
         name: 'p valor',
         yAxis: 1,
-        zIndex: 10,
-        baseSeries: 1,
-        data:[55, 22, 51]
+        data:[0.5, 0.5,0.5]
       }, {
-        yAxis: 0,
-        name: 'T calculado',
         type: 'column',
+        name: 'T calculado',
+        yAxis: 0,
         data: [51, 36, 10]
       }]
     },
     opitionChart1: {
       chart: {
+        
         zoomType: 'xy'
       },
       title: {
@@ -566,6 +565,7 @@ export default {
             const element = this.dsResposta[index];
             let matrisY = [];
             matrisY[element.index] = this.dsMatrix.map(v => [v[element.attributeName]]);
+            //matrisY[element.index] = [[1.0],[2.0],[3.0],[4.0],[5.1],[5.0]]
 
             matrisY[element.index] = JSON.stringify(matrisY[element.index]);
 
@@ -637,7 +637,7 @@ export default {
                 });
               })
           }
-          this.updateChat()
+          this.mudarVariavel();
 
           break
         default:
@@ -734,6 +734,7 @@ export default {
     },
     toName(prop) {
       let x = ""
+      console.log("prop",prop)
       prop.forEach(element => {
         x += "X" +element+" "
       });
@@ -742,40 +743,34 @@ export default {
     updateChat(){
       const config = {}
       const math = create(all, config)
-      this.dsTabAnova = this.dssTabAnova[this.select.index];
 
       const element = this.dsResposta[parseInt(this.select.index) - 1];
     
       let matrisY = this.dsMatrix.map(v => [v[element.attributeName]]);
+      //let matrisY = [[1.0],[2.0],[3.0],[4.0],[5.1],[5.0]];
       let matrisY_ = math.multiply(math.transpose(this.MatrixDecode), this.dsTesteT.map(x => [x.B]))
 
       this.opitionChart1.series[0].data = math.concat(matrisY, matrisY_)
-      let max = Math.max(math.concat(matrisY, matrisY_))
-      max = max >= 0?1.1*max:1; 
+      let max = math.max([...matrisY, ...matrisY_].map(x => x[0]))
+      if(max == 0 || max ==  NaN||max == undefined ){
+        max = 1; 
+      }else {
+        max = max * 1.1; 
+      }
       this.opitionChart1.series[1].data = [[0,0], [max,max]]
     
-      console.log("grafico 1 foi ")
-
-
-      this.opitionChart2.xAxis.categories = this.dsTesteT.map( x => x.X == 0 ? "media":this.toName(x.X))
-      this.opitionChart2.series[0].data= this.dsTesteT.map( x => x["p-valor"])
-      this.opitionChart2.series[1].data= this.dsTesteT.map( x => x["t[(B - H0)/er]"])
-
-      
       //console.log(this.regressaoChat1)
       this.regressaoChat.update(this.opitionChart1);
-    
-      this.regressaoChat2.update(this.opitionChart2);
-      console.log("this.regressaoChat2:",this.regressaoChat2)
-      console.log("this.regressaoChat:",this.regressaoChat)
-      console.log("this.regressaoChat.options:",this.regressaoChat.options)
-      console.log("this.regressaoChat2.options:",this.regressaoChat2.options)
-     
 
+      this.opitionChart2.xAxis.categories = this.dsTesteT.map( x => x.X == 0 ? "media":this.toName(x.X))
+      this.opitionChart2.series[0].data= this.dsTesteT.map( x => [parseFloat(x["p-valor"])])
+      this.opitionChart2.series[1].data= this.dsTesteT.map( x => [parseFloat(x["t[(B - H0)/er]"])])
+      //this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
+      this.regressaoChat2.update(this.opitionChart2);
     }
   },
   mounted() {
-    pareto(Highcharts);
+    pareto(Highcharts)
     this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
     this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
   },
