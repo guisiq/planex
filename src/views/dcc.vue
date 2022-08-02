@@ -15,7 +15,7 @@
     <v-stepper-items>
       <!-- variaveis -->
       <v-stepper-content step="1">
-        <div id="container"></div>
+       
         <v-card class="mb-12">
           <v-row>
             <v-col>
@@ -294,12 +294,25 @@
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
     </v-stepper-items>
+    <div style="height : 0.5w ;    width:0.5w; color:red ">
+
+       <div  id="container"></div>
+    </div>
   </v-stepper>
+
+
 </template>
+
 
 <script>
 import Highcharts from 'highcharts'
+import Highcharts3d from 'highcharts-3d'
+import more from 'highcharts/highcharts-more'
 import pareto from 'highcharts/modules/pareto';
+import exporting from 'highcharts/modules/exporting';
+import exportData from 'highcharts/modules/export-data';
+import accessibility from 'highcharts/modules/accessibility';
+
 
 import axios from "axios";
 import { linear } from 'vuetify/lib/services/goto/easing-patterns';
@@ -318,7 +331,7 @@ export default {
 
   data: () => ({
 
-    url:'https://apiplanex.herokuapp.com',//heroku
+    url: 'https://apiplanex.herokuapp.com',//heroku
     url: 'http://127.0.0.1:5000',//local
     NReplicadas: 2,
     NRespostas: 2,
@@ -436,29 +449,29 @@ export default {
       },
       xAxis: {
         categories: [
-          'media',"x1","x2"
+          'media', "x1", "x2"
         ],
         crosshair: true
       },
-      yAxis:  [{
-          title: {
-            text: 'T calculado'
-          },
-          min: 0,
+      yAxis: [{
+        title: {
+          text: 'T calculado'
         },
-        {
-          title: {
-            text: 'p-valor'
-          },
-          max: 1,
-        }
+        min: 0,
+      },
+      {
+        title: {
+          text: 'p-valor'
+        },
+        max: 1,
+      }
       ]
       ,
       series: [{
         type: 'line',
         name: 'p valor',
         yAxis: 1,
-        data:[0.5, 0.5,0.5]
+        data: [0.5, 0.5, 0.5]
       }, {
         type: 'column',
         name: 'T calculado',
@@ -468,7 +481,6 @@ export default {
     },
     opitionChart1: {
       chart: {
-        
         zoomType: 'xy'
       },
       title: {
@@ -545,6 +557,7 @@ export default {
       }]
     },
     regressaoChat: null,
+    regressaoChat2: null,
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
   }),
 
@@ -734,45 +747,142 @@ export default {
     },
     toName(prop) {
       let x = ""
-      console.log("prop",prop)
+      console.log("prop", prop)
       prop.forEach(element => {
-        x += "X" +element+" "
+        x += "X" + element + " "
       });
       return x
     },
-    updateChat(){
+    updateChat() {
       const config = {}
       const math = create(all, config)
 
       const element = this.dsResposta[parseInt(this.select.index) - 1];
-    
+
       let matrisY = this.dsMatrix.map(v => [v[element.attributeName]]);
       //let matrisY = [[1.0],[2.0],[3.0],[4.0],[5.1],[5.0]];
       let matrisY_ = math.multiply(math.transpose(this.MatrixDecode), this.dsTesteT.map(x => [x.B]))
 
       this.opitionChart1.series[0].data = math.concat(matrisY, matrisY_)
       let max = math.max([...matrisY, ...matrisY_].map(x => x[0]))
-      if(max == 0 || max ==  NaN||max == undefined ){
-        max = 1; 
-      }else {
-        max = max * 1.1; 
+      if (max == 0 || max == NaN || max == undefined) {
+        max = 1;
+      } else {
+        max = max * 1.1;
       }
-      this.opitionChart1.series[1].data = [[0,0], [max,max]]
-    
+      this.opitionChart1.series[1].data = [[0, 0], [max, max]]
+
       //console.log(this.regressaoChat1)
       this.regressaoChat.update(this.opitionChart1);
 
-      this.opitionChart2.xAxis.categories = this.dsTesteT.map( x => x.X == 0 ? "media":this.toName(x.X))
-      this.opitionChart2.series[0].data= this.dsTesteT.map( x => [parseFloat(x["p-valor"])])
-      this.opitionChart2.series[1].data= this.dsTesteT.map( x => [parseFloat(x["t[(B - H0)/er]"])])
+      this.opitionChart2.xAxis.categories = this.dsTesteT.map(x => x.X == 0 ? "media" : this.toName(x.X))
+      this.opitionChart2.series[0].data = this.dsTesteT.map(x => [parseFloat(x["p-valor"])])
+      this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["t[(B - H0)/er]"])])
       //this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
       this.regressaoChat2.update(this.opitionChart2);
     }
   },
   mounted() {
-    pareto(Highcharts)
+    pareto(Highcharts);
+    more(Highcharts);
+    exportData(Highcharts)
+    exporting(Highcharts)
+    accessibility(Highcharts)
+    Highcharts3d(Highcharts)
+
     this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
-    this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
+    Highcharts.setOptions({
+      colors: Highcharts.getOptions().colors.map(function (color) {
+        return {
+          radialGradient: {
+            cx: 0.4,
+            cy: 0.3,
+            r: 0.5
+          },
+          stops: [
+            [0, color],
+            [1, Highcharts.color(color).brighten(-0.2).get('rgb')]
+          ]
+        };
+      })
+    });
+
+    // Set up the chart
+    this.regressaoChat3 = Highcharts.chart( {
+      chart: {
+        renderTo: 'container',
+        margin: 100,
+        type: 'scatter',
+        animation: false,
+        options3d: {
+          enabled: true,
+          alpha: 10,
+          beta: 30,
+          depth: 250,
+          viewDistance: 5,
+          fitToPlot: false,
+          frame: {
+            bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+            back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+            side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+          }
+        }
+      },
+      title: {
+        text: 'Draggable box'
+      },
+      subtitle: {
+        text: 'Click and drag the plot area to rotate in space'
+      },
+      plotOptions: {
+        scatter: {
+          width: 10,
+          height: 10,
+          depth: 10
+        }
+      },
+      yAxis: {
+        min: 0,
+        max: 10,
+        title: null
+      },
+      xAxis: {
+        min: 0,
+        max: 10,
+        gridLineWidth: 1
+      },
+      zAxis: {
+        min: 0,
+        max: 10,
+        showFirstLabel: false
+      },
+      legend: {
+        enabled: false
+      },
+      series: [{
+        name: 'Data',
+        colorByPoint: true,
+        accessibility: {
+          exposeAsGroupOnly: true
+        },
+        data: [
+          [1, 6, 5], [8, 7, 9], [1, 3, 4], [4, 6, 8], [5, 7, 7], [6, 9, 6],
+        ]
+      },{
+    	name: 'Poly',
+      type: 'polygon',
+      data: [
+      	[1,6,2],
+        [2,7,5],
+        [3,6,2],
+        [4,7,5]
+      ]
+    }
+      ]
+    });
+
+
+    this.regressaoChat2 = Highcharts.chart('container2', this.opitionChart2)
   },
   watch: {
     Nvariaveis() {
