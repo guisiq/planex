@@ -440,6 +440,69 @@ export default {
     dssTesteT: [],
     dsTabAnova: [],
     dssTabAnova: [],
+    opitionChart3: {
+      chart: {
+        renderTo: 'container',
+        margin: 100,
+        type: 'scatter',
+        animation: false,
+        options3d: {
+          enabled: true,
+          alpha: 10,
+          beta: 30,
+          depth: 250,
+          viewDistance: 5,
+          fitToPlot: false,
+          frame: {
+            bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+            back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+            side: { size: 1, color: 'rgba(0,0,0,0.06)' }
+          }
+        }
+      },
+      title: {
+        text: 'Draggable box'
+      },
+      subtitle: {
+        text: 'Click and drag the plot area to rotate in space'
+      },
+      plotOptions: {
+        scatter: {
+          width: 10,
+          height: 10,
+          depth: 10
+        }
+      },
+      yAxis: {
+        min: 0,
+        max: 10,
+        title: null
+      },
+      xAxis: {
+        min: 0,
+        max: 10,
+        gridLineWidth: 1
+      },
+      zAxis: {
+        min: 0,
+        max: 10,
+        showFirstLabel: false
+      },
+      legend: {
+        enabled: false
+      },
+      series: [{
+    	name: 'Poly',
+      type: 'polygon',
+      data: [
+      	[1,6,2],
+        [2,7,5],
+        [3,6,2],
+        [4,7,5]
+      ]
+    }
+      ]
+    },
     opitionChart2: {
       title: {
         text: 'efeitos padronizado'
@@ -651,7 +714,6 @@ export default {
               })
           }
           this.mudarVariavel();
-
           break
         default:
           break;
@@ -747,7 +809,6 @@ export default {
     },
     toName(prop) {
       let x = ""
-      console.log("prop", prop)
       prop.forEach(element => {
         x += "X" + element + " "
       });
@@ -772,7 +833,8 @@ export default {
       }
       this.opitionChart1.series[1].data = [[0, 0], [max, max]]
 
-      //console.log(this.regressaoChat1)
+      // console.log("this.regressaoChat",this.regressaoChat)
+      // console.log("this.regressaoChat2",this.regressaoChat2)
       this.regressaoChat.update(this.opitionChart1);
 
       this.opitionChart2.xAxis.categories = this.dsTesteT.map(x => x.X == 0 ? "media" : this.toName(x.X))
@@ -780,6 +842,60 @@ export default {
       this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["t[(B - H0)/er]"])])
       //this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
       this.regressaoChat2.update(this.opitionChart2);
+      {
+        //calculando valores do grafico
+        let k = 5;
+        let k2 = k-1;
+        let data3d = math.ones([k,k])
+        let data3dfaces  = [];
+        for(let i = 0 ; i++; i <= k){
+          auxi = -1 + (2/k)*i
+          for(let e = 0 ; e ++; e <= k){
+            auxe = -1 + (2/k)*e
+            data3d[i][e] = [auxi,auxe,this.regrecaoFunction([auxi,auxe])]
+          }
+        }
+        for(let i2 = 0 ; i2++; i2 <= k2){
+          auxi = -1 + (2/k)*i2
+          console.log("for i:"+i2)
+          for(let e2 = 0 ; e2 ++; e2 <= k2){
+            auxe = -1 + (2/k)*e2;
+            console.log("for i:"+i2+" e:"+e2)
+            data3dfaces.push(1) 
+          }
+        }
+        console.log("data3dfaces:",data3dfaces)
+        this.opitionChart3.series[0] = data3dfaces;
+        // this.opitionChart3.series.splice(0,1)
+
+        this.regressaoChat3.update(this.opitionChart3) ;
+
+        console.log("data3d:",data3d)
+        console.log("data3dfaces:",data3dfaces)
+        console.log("this.opitionChart3:",this.opitionChart3 )
+
+
+      }
+    },
+    regrecaoFunction(Xs){
+      let Y = 0;
+      this.dsTesteT.map( x =>{
+        let aux = 1;
+        x.X.map(x => {
+            if (x!=0){
+              aux *= Xs[ x-1 ]
+            }
+        }) 
+        aux *= x.B;
+        console.log("x.X:",x.X)
+        console.log("x.b:",x.B)
+        console.log("aux:",aux)
+        Y += aux;
+        }
+      )
+      console.log("dsTesteT:",this.dsTesteT)
+      console.log("Xs:",Xs)
+      console.log("Y",Y)
     }
   },
   mounted() {
@@ -791,6 +907,7 @@ export default {
     Highcharts3d(Highcharts)
 
     this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
+    this.regressaoChat2 = Highcharts.chart('container2', this.opitionChart2)
     Highcharts.setOptions({
       colors: Highcharts.getOptions().colors.map(function (color) {
         return {
@@ -806,83 +923,11 @@ export default {
         };
       })
     });
-
     // Set up the chart
-    this.regressaoChat3 = Highcharts.chart( {
-      chart: {
-        renderTo: 'container',
-        margin: 100,
-        type: 'scatter',
-        animation: false,
-        options3d: {
-          enabled: true,
-          alpha: 10,
-          beta: 30,
-          depth: 250,
-          viewDistance: 5,
-          fitToPlot: false,
-          frame: {
-            bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
-            back: { size: 1, color: 'rgba(0,0,0,0.04)' },
-            side: { size: 1, color: 'rgba(0,0,0,0.06)' }
-          }
-        }
-      },
-      title: {
-        text: 'Draggable box'
-      },
-      subtitle: {
-        text: 'Click and drag the plot area to rotate in space'
-      },
-      plotOptions: {
-        scatter: {
-          width: 10,
-          height: 10,
-          depth: 10
-        }
-      },
-      yAxis: {
-        min: 0,
-        max: 10,
-        title: null
-      },
-      xAxis: {
-        min: 0,
-        max: 10,
-        gridLineWidth: 1
-      },
-      zAxis: {
-        min: 0,
-        max: 10,
-        showFirstLabel: false
-      },
-      legend: {
-        enabled: false
-      },
-      series: [{
-        name: 'Data',
-        colorByPoint: true,
-        accessibility: {
-          exposeAsGroupOnly: true
-        },
-        data: [
-          [1, 6, 5], [8, 7, 9], [1, 3, 4], [4, 6, 8], [5, 7, 7], [6, 9, 6],
-        ]
-      },{
-    	name: 'Poly',
-      type: 'polygon',
-      data: [
-      	[1,6,2],
-        [2,7,5],
-        [3,6,2],
-        [4,7,5]
-      ]
-    }
-      ]
-    });
+    this.regressaoChat3 = Highcharts.chart(this.opitionChart3);
 
 
-    this.regressaoChat2 = Highcharts.chart('container2', this.opitionChart2)
+
   },
   watch: {
     Nvariaveis() {
