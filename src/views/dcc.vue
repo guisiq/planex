@@ -301,13 +301,13 @@
   </v-stepper>
 
 
+
 </template>
-
-
 <script>
 import Highcharts from 'highcharts'
-import Highcharts3d from 'highcharts-3d'
-import more from 'highcharts/highcharts-more'
+import coloraxis from 'highcharts/modules/coloraxis'
+import Highcharts3d from 'highcharts/highcharts-3d'
+import more from 'highcharts/highcharts-more.src'
 import pareto from 'highcharts/modules/pareto';
 import exporting from 'highcharts/modules/exporting';
 import exportData from 'highcharts/modules/export-data';
@@ -444,6 +444,7 @@ export default {
       chart: {
         renderTo: 'container',
         margin: 100,
+        // type: 'scatter3d',
         type: 'scatter',
         animation: false,
         options3d: {
@@ -492,15 +493,24 @@ export default {
         enabled: false
       },
       series: [{
-    	name: 'Poly',
-      type: 'polygon',
-      data: [
-      	[1,6,2],
-        [2,7,5],
-        [3,6,2],
-        [4,7,5]
-      ]
-    }
+        name: 'Poly',
+        type: 'polygon',
+        data: [
+          [1,6,2],
+          [2,7,5],
+          [3,6,2],
+          [4,7,5]
+        ]
+      },{
+        name: 'data',
+        type: 'scatter3d',
+        data: [
+          [1,6,2],
+          [2,7,5],
+          [3,6,2],
+          [4,7,5]
+        ]
+      }
       ]
     },
     opitionChart2: {
@@ -869,6 +879,7 @@ export default {
         // this.opitionChart3.series.splice(0,1)
 
         this.regressaoChat3.update(this.opitionChart3) ;
+        //this.regressaoChat3.redraw() ;
 
         console.log("data3d:",data3d)
         console.log("data3dfaces:",data3dfaces)
@@ -904,7 +915,8 @@ export default {
     exportData(Highcharts)
     exporting(Highcharts)
     accessibility(Highcharts)
-    Highcharts3d(Highcharts)
+    Highcharts3d(Highcharts);
+    //Highcharts3d1(Highcharts);
 
     this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
     this.regressaoChat2 = Highcharts.chart('container2', this.opitionChart2)
@@ -925,6 +937,52 @@ export default {
     });
     // Set up the chart
     this.regressaoChat3 = Highcharts.chart(this.opitionChart3);
+    let chart = this.regressaoChat3;
+    // movimentacao do grafico 
+    (function (H) {
+      function dragStart(eStart) {
+        eStart = chart.pointer.normalize(eStart);
+
+        var posX = eStart.chartX,
+          posY = eStart.chartY,
+          alpha = chart.options.chart.options3d.alpha,
+          beta = chart.options.chart.options3d.beta,
+          sensitivity = 5, // lower is more sensitive
+          handlers = [];
+
+        function drag(e) {
+          // Get e.chartX and e.chartY
+          e = chart.pointer.normalize(e);
+
+          chart.update({
+            chart: {
+              options3d: {
+                alpha: alpha + (e.chartY - posY) / sensitivity,
+                beta: beta + (posX - e.chartX) / sensitivity
+              }
+            }
+          }, undefined, undefined, false);
+        }
+
+        function unbindAll() {
+          handlers.forEach(function (unbind) {
+            if (unbind) {
+              unbind();
+            }
+          });
+          handlers.length = 0;
+        }
+
+        handlers.push(H.addEvent(document, 'mousemove', drag));
+        handlers.push(H.addEvent(document, 'touchmove', drag));
+
+
+        handlers.push(H.addEvent(document, 'mouseup', unbindAll));
+        handlers.push(H.addEvent(document, 'touchend', unbindAll));
+      }
+      H.addEvent(chart.container, 'mousedown', dragStart);
+      H.addEvent(chart.container, 'touchstart', dragStart);
+    }(Highcharts));
 
 
 
