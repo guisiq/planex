@@ -319,7 +319,7 @@ export default {
   data: () => ({
 
     url:'https://apiplanex.herokuapp.com',//heroku
-    url: 'http://127.0.0.1:5000',//local
+    // url: 'http://127.0.0.1:5000',//local
     NReplicadas: 2,
     NRespostas: 2,
     tela: 1,
