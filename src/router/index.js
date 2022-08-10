@@ -27,16 +27,16 @@ const routes = [
     name: 'DCC',
     component: DCC
   },
-  {
-    meta:{
-      title:"Delineamento Composto Central (DCC)"
-    },
-    title:"chart3d",
-    icon: 'list-nested', 
-    path: '/chart3d',
-    name: 'chart3d',
-    component: chart3d
-  },
+  // {
+  //   meta:{
+  //     title:"Delineamento Composto Central (DCC)"
+  //   },
+  //   title:"chart3d",
+  //   icon: 'list-nested', 
+  //   path: '/chart3d',
+  //   name: 'chart3d',
+  //   component: chart3d
+  // },
   // {
   //   path: '/about',
   //   name: 'about',
