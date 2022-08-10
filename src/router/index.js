@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DCC from '../views/dcc.vue'
-import chart3d from '../views/3dtest.vue'
 import Meta from 'vue-meta'
 Vue.use(VueRouter)
 Vue.use(Meta)

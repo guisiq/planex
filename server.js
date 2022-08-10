@@ -3,7 +3,7 @@ var path = require('path')
 var serveStatic = require('serve-static')
 
 var app = express()
-app.use(serveStatic(path.join(__dirname, 'dist1')))
+app.use(serveStatic("C:\\Users\\lopes\\OneDrive\\estudos\\facudade\\proj.pesquisa\\planex\\dist"))
 
 var port = process.env.PORT || 5000
 app.listen(port)
