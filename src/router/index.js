@@ -2,9 +2,10 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DCC from '../views/dcc.vue'
-
+import chart3d from '../views/3dtest.vue'
+import Meta from 'vue-meta'
 Vue.use(VueRouter)
-
+Vue.use(Meta)
 const routes = [
   {
     meta:{
@@ -26,6 +27,16 @@ const routes = [
     name: 'DCC',
     component: DCC
   },
+  // {
+  //   meta:{
+  //     title:"Delineamento Composto Central (DCC)"
+  //   },
+  //   title:"chart3d",
+  //   icon: 'list-nested', 
+  //   path: '/chart3d',
+  //   name: 'chart3d',
+  //   component: chart3d
+  // },
   // {
   //   path: '/about',
   //   name: 'about',
