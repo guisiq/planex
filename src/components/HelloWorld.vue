@@ -15,8 +15,7 @@
     <H1>Planex</H1>
     <h3>pranejamento de experimentos</h3>
     <P style="text-align: justify;
-              ">
-    aqui vai um texto falando so pre o projeto adsdasdasfd asdfsfasfasf asfasfa asfasfasf asfasfasf asfasfasf </P>
+              ">esse e um site destinado a realizacao de experimentos fatoriais  </P>
     <div> 
       <v-btn
         block
