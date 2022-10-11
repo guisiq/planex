@@ -12,10 +12,9 @@
               background: #fff;">
   <div style="display: flex;align-items: center;flex-direction: column;align-content:center;">
 
-    <H1>Planex</H1>
-    <h3>pranejamento de experimentos</h3>
-    <P style="text-align: justify;
-              ">esse e um site destinado a realizacao de experimentos fatoriais  </P>
+    <H1>PlanEx</H1>
+    <h3>Planejamento de Experimentos</h3>
+    <P style="text-align: justify;"> PlanEx é um ambiente Web que contém as ferramentas características de Planejamento Fatorial 2^K e delineamento composto central (DCC) e composto central rotacional (DCCR)</P>
     <div> 
       <v-btn
         block
