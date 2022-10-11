@@ -390,10 +390,10 @@ export default {
         value: "unidade",
       },
     ],
-    headersMatrizX: [],
-    headersTesteT: [],
-    headerssTesteT: [],
-    headersTabAnova: [],
+    headersMatrizX:   [],
+    headersTesteT:    [],
+    headerssTesteT:   [],
+    headersTabAnova:  [],
     dsVariaveis: [
       {
         "nome": "",
@@ -432,13 +432,13 @@ export default {
       "index": "0",
       "unidade": " "
     },
-    dsMatrix: [],
+    dsMatrix:     [],
     MatrixDecode: [],
-    dsTesteT: [],
-    dssTesteT: [],
-    dsTabAnova: [],
-    dssTabAnova: [],
-    dataSurface: [
+    dsTesteT:     [],
+    dssTesteT:    [],
+    dsTabAnova:   [],
+    dssTabAnova:  [],
+    dataSurface:  [
     {
         "x": [
             -1,
@@ -2227,12 +2227,12 @@ export default {
                 "#F52102"
             ]
         ]
-    }
-],
+      }],
 
     layoutSurface: {
-      title: "grafico 3d"
-    },
+      title: "grafico 3d",
+      Zaxis: {title: "Resposta" },
+      },
     opitionChart2: {
       title: {
         text: 'efeitos padronizado'
