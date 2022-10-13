@@ -249,10 +249,9 @@
           </template>
         </v-data-table>
         <!-- funcao de regrecao  -->
-        <div>
+        <div style="margin-top: 6rem; margin-bottom: 6rem;">
           <span> Y<sub> {{ select.index }}</sub> = </span>
           <span v-for="item in dsTesteT ">
-
             <span v-if="item.X == 0">
               {{ item.B }}
             </span>
@@ -261,7 +260,7 @@
               {{ item.B }}
               <span v-for="item in item.X">X<sub> {{ item }}</sub> </span>
             </span>
-            <span v-if="item.index <= dsTesteT.length - 2"> + </span>
+            <span v-if="(item.index <= dsTesteT.length - 2) "> + </span>
           </span>
         </div>
         <v-btn text> Cancelar </v-btn>
@@ -301,8 +300,6 @@
 
     </div>
   </v-stepper>
-
-
 
 </template>
 <script>
@@ -2355,6 +2352,9 @@ export default {
   }),
 
   methods: {
+    log(val){
+      console.log("val",val);
+    },
     numberRule: (val) => {
       if (val < 0) return "insira um valor positivo ";
       return true;
