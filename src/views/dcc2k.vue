@@ -23,11 +23,7 @@
               <v-text-field id="nVariaveisInput" type="number" step="any" min="0" ref="input" :rules="[numberRule]"
                 v-model.number="Nvariaveis"></v-text-field>
             </v-col>
-            <v-col>
-              <label for="nVariaveisInput">Escolha a quantidade de replicatas do ponto central (rpc) :</label>
-              <v-text-field id="nReplicadasInput" type="number" step="any" min="0" ref="input" :rules="[numberRule]"
-                v-model.number="NReplicadas"></v-text-field>
-            </v-col>
+           
           </v-row>
 
           <!-- tabela -->
@@ -328,7 +324,7 @@ export default {
 
     url:'https://apiplanex.herokuapp.com',//heroku
     // url: 'http://127.0.0.1:5000',//local
-    NReplicadas: 2,
+    NReplicadas: 0,
     NRespostas: 2,
     tela: 1,
     Nvariaveis: 2,
@@ -355,13 +351,13 @@ export default {
         value: "unidade",
       },
       {
-        text: "nível baixo(-1)",
+        text: "nivel baixo(-1)",
         align: "start",
         sortable: false,
         value: "vBaixo",
       },
       {
-        text: "nível alto(+1)",
+        text: "nivel alto(+1)",
         align: "start",
         sortable: false,
         value: "vAlto",

@@ -2,9 +2,13 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DCC from '../views/dcc.vue'
+import DCC2k from '../views/dcc2k.vue'
 import Meta from 'vue-meta'
 Vue.use(VueRouter)
 Vue.use(Meta)
+// ΓΔ ΘΛΠΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρςστυφχψωϐϑϒϕϚϛϴ √ « » ’ … • á Â À Æ æ Ç É Ê È Ô ∀∁∂∃∄∅∆∇∈∉∊∋∌∍∎∏∐∑−∓∔∕∖∗∘∙√∛∜∝∞∟∠∡∢∣∤∥∦∧∨∩∪∫∬∭∮∯∰∱∲∳ ∻∼∽∾∿≀≁⊂⊃⊄⊅⊆⊇⊈⊉⊊⊋⊌⊍⊎⊏⊐⊑⊒‰‱ℂℕℤℚℝⅅ℃℉ℇ
+// PUISSANCES : ²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ ⁿ ͣ   ͤ   ͥ   ͦ   ͧ   ͨ   ͩ   ͪ   ͫ   ͬ   ͭ   ͮ   ͯ   ᴬ   ᴭ ᴮ ᴯ ᴰ ᴱ ᴲ ᴳ ᴴ ᴵ ᴶ ᴷ ᴸ ᴹ ᴺ ᴻ ᴼ ᴽ ᴾ ᴿ ᵀ ᵁ ᵂ ᵃ ᵄ ᵅ ᵆ ᵇ ᵈ ᵉ ᵊ ᵋ ᵌ ᵍ ᵎ ᵏ INDICES: ₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₒₓₔ ᵢ  ᵣ   ᵤ   ᵥ   ᵦ   ᵧ   ᵨ   ᵩ   ᵪ
+// ≂≃≄≅≆≇≈≉≊≋≌≍≎≏≐≑≒≓≔≕≖≗≘≙≚≛≜≝≞≟≠≡≢≣≤≥≦≧≨≩≪≫≬≭≮≯≰≱≲≳≴≵≶≷≸≹≺≻≼≽≾≿⊀
 const routes = [
   {
     meta:{
@@ -25,6 +29,16 @@ const routes = [
     path: '/DCC',
     name: 'DCC',
     component: DCC
+  },
+  {
+    meta:{
+      title:'Delineamento Composto 2ᴷ' 
+    },
+    title:"Delineamento Composto Central (DCC)",
+    icon: 'list-nested', 
+    path: '/DCC2k',
+    name: 'DCC2k',
+    component: DCC2k
   },
   // {
   //   meta:{
