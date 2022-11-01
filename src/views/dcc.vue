@@ -270,7 +270,9 @@
       </v-stepper-content>
       <!-- TabAnova -->
       <v-stepper-content step="5">
-        <div id="container1"></div>
+        <div style="max-width:50% ;">
+          <div id="container1"></div>
+        </div>
         <div id="container2"></div>
         <div id="myDiv"></div>
         <v-card class="mb-12"></v-card>
@@ -2227,12 +2229,12 @@ export default {
       }],
 
     layoutSurface: {
-      title: "grafico 3d",
+      title: "superfice de regresao",
       Zaxis: {title: "Resposta" },
       },
     opitionChart2: {
       title: {
-        text: 'efeitos padronizado'
+        text: 'grafico de pareto'
       },
       tooltip: {
         shared: true
@@ -2245,33 +2247,34 @@ export default {
       },
       yAxis: [{
         title: {
-          text: 'T calculado'
+          text: 'T Critico'
         },
         min: 0,
       },
       {
         title: {
-          text: 'p-valor'
+          text: 'Betas'
         },
-        max: 1,
+        // max: 1,
       }
       ]
       ,
       series: [{
         type: 'line',
-        name: 'p valor',
+        name: 'T critico ',
         yAxis: 1,
         data: [0.5, 0.5, 0.5]
       }, {
         type: 'column',
-        name: 'T calculado',
+        name: 'Betas',
         yAxis: 0,
         data: [51, 36, 10]
       }]
     },
     opitionChart1: {
       chart: {
-        zoomType: 'xy'
+        zoomType: 'xy',
+        height:  '100%'
       },
       title: {
         text: 'Valores Experimentais × Preditos'
@@ -2284,7 +2287,7 @@ export default {
           enabled: true,
           text: 'valor experimental'
         },
-
+        crosshair: true
         // startOnTick: true,
         // endOnTick: true,
         // showLastLabel: true
@@ -2292,6 +2295,7 @@ export default {
       yAxis: {
         type: "linear",
         width: 10,
+        crosshair: true,
         alignTicks: false,
         title: {
           text: 'valor predito'
@@ -2569,8 +2573,11 @@ export default {
       this.regressaoChat.update(this.opitionChart1);
 
       this.opitionChart2.xAxis.categories = this.dsTesteT.map(x => x.X == 0 ? "media" : this.toName(x.X))
-      this.opitionChart2.series[0].data = this.dsTesteT.map(x => [parseFloat(x["p-valor"])])
-      this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["t[(B - H0)/er]"])])
+      // this.opitionChart2.series[0].data = this.dsTesteT.map(x => [parseFloat(x["p-valor"])])
+      // this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["t[(B - H0)/er]"])])
+
+      this.opitionChart2.series[0].data = this.dsTesteT.map(x => [parseFloat(x["t Crítico"])])
+      this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["B"])])
       //this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
       this.regressaoChat2.update(this.opitionChart2);
 
