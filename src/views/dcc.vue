@@ -326,8 +326,8 @@ export default {
   },
   data: () => ({
 
-    url:'https://apiplanex.herokuapp.com',//heroku
-    // url: 'http://127.0.0.1:5000',//local
+    //url:'https://apiplanex.herokuapp.com',//heroku
+    url: 'http://127.0.0.1:5000',//local
     NReplicadas: 2,
     NRespostas: 2,
     tela: 1,
@@ -2401,7 +2401,8 @@ export default {
                   f["H0"] = f["H0"] == null ? 0 : f["H0"].toFixed(6);
                   f["er"] = f["er"] == null ? 0 : f["er"].toFixed(6);
                   f["B"] = f["B"] == null ? 0 : f["B"].toFixed(6);
-                  f["t[(B - H0)/er]"] = f["t[(B - H0)/er]"] == null ? 0 : f["t[(B - H0)/er]"].toFixed(6);
+                  //f["t[(B - H0)/er]"] = f["t[(B - H0)/er]"] == null ? 0 : f["t[(B - H0)/er]"].toFixed(6);
+                  f["t Calculado"] = f["t Calculado"] == null ? 0 : f["t Calculado"].toFixed(6);
                   f["p-valor"] = f["p-valor"] == null ? 0 : f["p-valor"].toFixed(6);
                 })
 
