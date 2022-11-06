@@ -33,9 +33,9 @@ const routes = [
   },
   {
     meta:{
-      title:'Delineamento Composto 2ᴷ' 
+      title:'Delineamento 2ᴷ' 
     },
-    title:"Delineamento Composto Central (DCC)",
+    title:"Delineamento 2ᴷ",
     icon: 'list-nested', 
     path: '/DCC2k',
     name: 'DCC2k',
