@@ -12,7 +12,9 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@handsontable/vue": "^12.2.0",
     "axios": "^0.27.1",
+    "handsontable": "^12.2.0",
     "highcharts": "^10.2.0",
     "mathjs": "^11.0.1",
     "plotly.js-dist": "^2.13.3",
