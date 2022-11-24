@@ -252,7 +252,7 @@
         <div style="margin-top: 6rem; margin-bottom: 6rem;">
           <span> Y<sub> {{ select.index }}</sub> = </span>
           <span v-for="item in dsTesteT ">
-            <span v-if="(item.index != 0&&item.B>0) "> + </span>
+            <span v-if="(item.B > 0) "> + </span>
             <span v-if="item.X == 0">
               {{ item.B }}
             </span>
@@ -296,11 +296,11 @@
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
     </v-stepper-items>
-    <div style="height : 0.5w ;    width:0.5w; color:red ">
+    <!-- <div style="height : 0.5w ;    width:0.5w; color:red ">
       
     <div id="myDiv"></div>
 
-    </div>
+    </div> -->
   </v-stepper>
 
 </template>
@@ -311,9 +311,8 @@ import exporting from 'highcharts/modules/exporting';
 import exportData from 'highcharts/modules/export-data';
 import Plotly from "plotly.js-dist";
 import accessibility from 'highcharts/modules/accessibility';
-
 import axios from "axios";
-import { create, all } from 'mathjs'
+import { create, all } from 'mathjs';
 
 //import matrix from 'matrix-js'
 
