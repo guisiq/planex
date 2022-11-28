@@ -3,13 +3,11 @@
     <v-stepper-header>
       <v-stepper-step :complete="tela > 1" step="1"> Variaveis </v-stepper-step>
       <v-divider></v-divider>
-      <v-stepper-step :complete="tela > 2" step="2"> Respostas </v-stepper-step>
+      <v-stepper-step :complete="tela > 2" step="2"> resultados </v-stepper-step>
       <v-divider></v-divider>
-      <v-stepper-step :complete="tela > 3" step="3"> resultados </v-stepper-step>
+      <v-stepper-step :complete="tela > 3" step="3"> Teste T </v-stepper-step>
       <v-divider></v-divider>
-      <v-stepper-step :complete="tela > 4" step="4"> Teste T </v-stepper-step>
-      <v-divider></v-divider>
-      <v-stepper-step :complete="tela > 5" step="5"> Tabela de Anova </v-stepper-step>
+      <v-stepper-step :complete="tela > 4" step="4"> Tabela de Anova </v-stepper-step>
     </v-stepper-header>
 
     <v-stepper-items>
@@ -91,14 +89,6 @@
             </template>
           </v-snackbar>
         </v-card>
-
-        <v-btn text> Cancelar </v-btn>
-
-        <v-btn @click="voltar"> Voltar </v-btn>
-        <v-btn color="primary" @click="avancar"> Continuar </v-btn>
-      </v-stepper-content>
-      <!-- respostas -->
-      <v-stepper-content step="2">
         <v-card class="mb-12">
           <v-row>
             <v-col>
@@ -177,8 +167,9 @@
         <v-btn @click="voltar"> Voltar </v-btn>
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
+      
       <!-- resultados  -->
-      <v-stepper-content step="3">
+      <v-stepper-content step="2">
         <v-card class="mb-12">
           <v-data-table :headers="headersMatrizX" :items="dsMatrix" disable-pagination :hide-default-footer="true">
 
@@ -217,7 +208,7 @@
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
       <!-- teste T -->
-      <v-stepper-content step="4">
+      <v-stepper-content step="3">
         <v-card class="mb-12"></v-card>
         <v-select v-model="select" :items="dsResposta" item-text="index" persistent-hint return-object single-line
           v-on:change="mudarVariavel()">
@@ -265,7 +256,7 @@
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
       <!-- TabAnova -->
-      <v-stepper-content step="5">
+      <v-stepper-content step="4">
         <div style="max-width:50% ;">
           <div id="container1"></div>
         </div>
@@ -2360,11 +2351,11 @@ export default {
     },
     avancar() {
       switch (this.tela) {
-        case 2:
+        case 1:
           this.definirMatx();
           break;
 
-        case 3: {
+        case 2: {
 
           for (let index = 0; index < this.dsResposta.length; index++) {
             const element = this.dsResposta[index];
@@ -2416,7 +2407,7 @@ export default {
         }
           break
 
-        case 4:
+        case 3:
           for (let index = 0; index < this.dsResposta.length; index++) {
             const element = this.dsResposta[index];
             let matrisY = [];
