@@ -62,7 +62,7 @@
                 @open="open" @close="close">
                 <div>{{ props.item.vBaixo }}</div>
                 <template v-slot:input>
-                  <div class="mt-4 text-h6">Atualizar valor baixo</div>
+                  <div class="mt-4 text-h6">Atualizar nivel menor</div>
                   <v-text-field v-model="props.item.vBaixo" :rules="[max25chars]" label="Edit" single-line counter
                     autofocus></v-text-field>
                 </template>
@@ -73,7 +73,7 @@
                 @open="open" @close="close">
                 <div>{{ props.item.vAlto }}</div>
                 <template v-slot:input>
-                  <div class="mt-4 text-h6">Atualizar valor alto</div>
+                  <div class="mt-4 text-h6">Atualizar nivel maior</div>
                   <v-text-field v-model="props.item.vAlto" :rules="[max25chars]" label="Edit" single-line counter
                     autofocus></v-text-field>
                 </template>
@@ -246,13 +246,13 @@
         </v-data-table>
         <!-- funcao de regrecao  -->
         <div style="margin-top: 6rem; margin-bottom: 6rem;">
-          <span> Y<sub> {{ select.index }}</sub> = </span>
+          <span> Ŷ<sub> {{ select.index }}</sub> = </span>
           <span v-for="item in dsTesteT ">
+            <span v-if="(item.B > 0) "> + </span>
             <span v-if="item.X == 0">
               {{ item.B }}
             </span>
 
-            <span v-if="(item.index != 0&&item.B>0) "> + </span>
             <span v-else="item.X == 0 ">
               {{ item.B }}
               <span v-for="item in item.X">X<sub> {{ item }}</sub> </span>
@@ -266,7 +266,9 @@
       </v-stepper-content>
       <!-- TabAnova -->
       <v-stepper-content step="5">
-        <div id="container1"></div>
+        <div style="max-width:50% ;">
+          <div id="container1"></div>
+        </div>
         <div id="container2"></div>
         <div id="myDiv"></div>
         <v-card class="mb-12"></v-card>
@@ -290,11 +292,11 @@
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
     </v-stepper-items>
-    <div style="height : 0.5w ;    width:0.5w; color:red ">
+    <!-- <div style="height : 0.5w ;    width:0.5w; color:red ">
       
     <div id="myDiv"></div>
 
-    </div>
+    </div> -->
   </v-stepper>
 
 </template>
@@ -305,9 +307,8 @@ import exporting from 'highcharts/modules/exporting';
 import exportData from 'highcharts/modules/export-data';
 import Plotly from "plotly.js-dist";
 import accessibility from 'highcharts/modules/accessibility';
-
 import axios from "axios";
-import { create, all } from 'mathjs'
+import { create, all } from 'mathjs';
 
 //import matrix from 'matrix-js'
 
@@ -322,10 +323,10 @@ export default {
   },
   data: () => ({
 
-    url:'https://apiplanex.herokuapp.com',//heroku
-    // url: 'http://127.0.0.1:5000',//local
-    NReplicadas: 0,
-    NRespostas: 2,
+    //url:'https://apiplanex.herokuapp.com',//heroku
+    url: 'http://127.0.0.1:5000',//local
+    NReplicadas: 2,
+    NRespostas: 1,
     tela: 1,
     Nvariaveis: 2,
     snack: false,
@@ -351,13 +352,13 @@ export default {
         value: "unidade",
       },
       {
-        text: "nivel baixo(-1)",
+        text: "nível menor(-1)",
         align: "start",
         sortable: false,
         value: "vBaixo",
       },
       {
-        text: "nivel alto(+1)",
+        text: "nível Maior(+1)",
         align: "start",
         sortable: false,
         value: "vAlto",
@@ -2223,12 +2224,12 @@ export default {
       }],
 
     layoutSurface: {
-      title: "grafico 3d",
+      title: "superfice de regresao",
       Zaxis: {title: "Resposta" },
       },
     opitionChart2: {
       title: {
-        text: 'efeitos padronizado'
+        text: 'grafico de pareto'
       },
       tooltip: {
         shared: true
@@ -2241,33 +2242,34 @@ export default {
       },
       yAxis: [{
         title: {
-          text: 'T calculado'
+          text: 'T Critico'
         },
         min: 0,
       },
       {
         title: {
-          text: 'p-valor'
+          text: 'Betas'
         },
-        max: 1,
+        // max: 1,
       }
       ]
       ,
       series: [{
         type: 'line',
-        name: 'p valor',
+        name: 'T critico ',
         yAxis: 1,
         data: [0.5, 0.5, 0.5]
       }, {
         type: 'column',
-        name: 'T calculado',
+        name: 'Betas',
         yAxis: 0,
         data: [51, 36, 10]
       }]
     },
     opitionChart1: {
       chart: {
-        zoomType: 'xy'
+        zoomType: 'xy',
+        height:  '100%'
       },
       title: {
         text: 'Valores Experimentais × Preditos'
@@ -2280,7 +2282,7 @@ export default {
           enabled: true,
           text: 'valor experimental'
         },
-
+        crosshair: true
         // startOnTick: true,
         // endOnTick: true,
         // showLastLabel: true
@@ -2288,6 +2290,7 @@ export default {
       yAxis: {
         type: "linear",
         width: 10,
+        crosshair: true,
         alignTicks: false,
         title: {
           text: 'valor predito'
@@ -2397,7 +2400,8 @@ export default {
                   f["H0"] = f["H0"] == null ? 0 : f["H0"].toFixed(6);
                   f["er"] = f["er"] == null ? 0 : f["er"].toFixed(6);
                   f["B"] = f["B"] == null ? 0 : f["B"].toFixed(6);
-                  f["t[(B - H0)/er]"] = f["t[(B - H0)/er]"] == null ? 0 : f["t[(B - H0)/er]"].toFixed(6);
+                  //f["t[(B - H0)/er]"] = f["t[(B - H0)/er]"] == null ? 0 : f["t[(B - H0)/er]"].toFixed(6);
+                  f["t Calculado"] = f["t Calculado"] == null ? 0 : f["t Calculado"].toFixed(6);
                   f["p-valor"] = f["p-valor"] == null ? 0 : f["p-valor"].toFixed(6);
                 })
 
@@ -2564,8 +2568,11 @@ export default {
       this.regressaoChat.update(this.opitionChart1);
 
       this.opitionChart2.xAxis.categories = this.dsTesteT.map(x => x.X == 0 ? "media" : this.toName(x.X))
-      this.opitionChart2.series[0].data = this.dsTesteT.map(x => [parseFloat(x["p-valor"])])
-      this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["t[(B - H0)/er]"])])
+      // this.opitionChart2.series[0].data = this.dsTesteT.map(x => [parseFloat(x["p-valor"])])
+      // this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["t[(B - H0)/er]"])])
+
+      this.opitionChart2.series[0].data = this.dsTesteT.map(x => [parseFloat(x["t Crítico"])])
+      this.opitionChart2.series[1].data = this.dsTesteT.map(x => [parseFloat(x["B"])])
       //this.regressaoChat2 = Highcharts.chart('container2',  this.opitionChart2)
       this.regressaoChat2.update(this.opitionChart2);
 

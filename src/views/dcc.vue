@@ -66,7 +66,7 @@
                 @open="open" @close="close">
                 <div>{{ props.item.vBaixo }}</div>
                 <template v-slot:input>
-                  <div class="mt-4 text-h6">Atualizar valor baixo</div>
+                  <div class="mt-4 text-h6">Atualizar nivel menor</div>
                   <v-text-field v-model="props.item.vBaixo" :rules="[max25chars]" label="Edit" single-line counter
                     autofocus></v-text-field>
                 </template>
@@ -77,7 +77,7 @@
                 @open="open" @close="close">
                 <div>{{ props.item.vAlto }}</div>
                 <template v-slot:input>
-                  <div class="mt-4 text-h6">Atualizar valor alto</div>
+                  <div class="mt-4 text-h6">Atualizar nivel maior</div>
                   <v-text-field v-model="props.item.vAlto" :rules="[max25chars]" label="Edit" single-line counter
                     autofocus></v-text-field>
                 </template>
@@ -101,7 +101,7 @@
         <v-btn @click="voltar"> Voltar </v-btn>
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
-      <!-- respostas -->
+      
       <v-stepper-content step="2">
         <v-card class="mb-12">
           <v-row>
@@ -250,7 +250,7 @@
         </v-data-table>
         <!-- funcao de regrecao  -->
         <div style="margin-top: 6rem; margin-bottom: 6rem;">
-          <span> Y<sub> {{ select.index }}</sub> = </span>
+          <span> Ŷ<sub> {{ select.index }}</sub> = </span>
           <span v-for="item in dsTesteT ">
             <span v-if="(item.B > 0) "> + </span>
             <span v-if="item.X == 0">
@@ -356,13 +356,13 @@ export default {
         value: "unidade",
       },
       {
-        text: "nível baixo(-1)",
+        text: "nível menor(-1)",
         align: "start",
         sortable: false,
         value: "vBaixo",
       },
       {
-        text: "nível alto(+1)",
+        text: "nível Maior(+1)",
         align: "start",
         sortable: false,
         value: "vAlto",
