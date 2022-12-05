@@ -2741,6 +2741,7 @@ export default {
       var Z = normDist.zScore(pontomedio);
       efeitos.push([this.dsTesteT[0].B,Z]);
       console.log("efeitos",efeitos);
+      console.log("=========efeitos teste =========",efeitos);
       for (let index = 1; index < this.dsTesteT.length; index++) {
         const element = this.dsTesteT[index];
         Li=Ls;
@@ -2780,10 +2781,6 @@ export default {
         };
       })
     });
-
-
-
-
   },
   watch: {
     Nvariaveis() {
