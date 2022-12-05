@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DCC from '../views/dcc.vue'
 import DCC2k from '../views/dcc2k.vue'
-import dcctable from '../views/dcctable.vue'
 import Meta from 'vue-meta'
 Vue.use(VueRouter)
 Vue.use(Meta)
@@ -41,16 +40,6 @@ const routes = [
     path: '/DCC2k',
     name: 'DCC2k',
     component: DCC2k
-  },
-  {
-    meta:{
-      title:'DCC table' 
-    },
-    title:"DCC table",
-    icon: 'list-nested', 
-    path: '/dcctable',
-    name: 'dcctable',
-    component: dcctable
   },
   // {
   //   meta:{

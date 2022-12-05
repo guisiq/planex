@@ -316,7 +316,7 @@ export default {
 
     //url:'https://apiplanex.herokuapp.com',//heroku
     url: 'http://127.0.0.1:5000',//local
-    NReplicadas: 2,
+    NReplicadas: 0,
     NRespostas: 1,
     tela: 1,
     Nvariaveis: 2,

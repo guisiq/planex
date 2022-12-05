@@ -8,6 +8,7 @@
       <v-stepper-step :complete="tela > 3" step="3"> Teste T </v-stepper-step>
       <v-divider></v-divider>
       <v-stepper-step :complete="tela > 4" step="4"> Tabela de Anova </v-stepper-step>
+      <v-stepper-step :complete="tela > 5" step="5"> Graficos </v-stepper-step>
     </v-stepper-header>
 
     <v-stepper-items>
@@ -261,12 +262,7 @@
       </v-stepper-content>
       <!-- TabAnova -->
       <v-stepper-content step="4">
-        <div style="max-width:50% ;">
-          <div id="container1"></div>
-        </div>
-        <div id="container2"></div>
-        <div id="myDiv"></div>
-        <v-card class="mb-12"></v-card>
+
         <v-select v-model="select" :items="dsResposta" item-text="index" persistent-hint return-object single-line
           v-on:change="mudarVariavel()">
           <template slot="selection">
@@ -283,6 +279,22 @@
         </v-data-table>
 
         <!-- <span>Y = <span v-for="(item, index) in dsTesteT" >{{item.be}}</span></span> -->
+        <v-btn @click="voltar"> Voltar </v-btn>
+        <v-btn color="primary" @click="avancar"> Continuar </v-btn>
+      </v-stepper-content>
+      <!-- Graficos -->
+      <v-stepper-content step="5">
+        <div style="max-width:50% ;">
+          <div id="container1"></div>
+        </div>
+        <div style="max-width:50% ;">
+          <div id="container3"></div>
+        </div>
+        <div id="container2"></div>
+        <div id="myDiv"></div>
+        <v-card class="mb-12"></v-card>
+       
+
         <v-btn @click="voltar"> Voltar </v-btn>
         <v-btn color="primary" @click="avancar"> Continuar </v-btn>
       </v-stepper-content>
@@ -303,6 +315,7 @@ import exportData from 'highcharts/modules/export-data';
 import Plotly from "plotly.js-dist";
 import accessibility from 'highcharts/modules/accessibility';
 import axios from "axios";
+import NormalDistribution from "normal-distribution";
 import { create, all } from 'mathjs';
 
 //import matrix from 'matrix-js'
@@ -403,11 +416,6 @@ export default {
       {
         "nome": "_",
         "index": "1",
-        "unidade": "_"
-      },
-      {
-        "nome": "_",
-        "index": "2",
         "unidade": "_"
       }
     ],
@@ -2340,8 +2348,93 @@ export default {
         data: [[0, 0], [1, 1]]
       }]
     },
+    opitionChart3: {
+      chart: {
+        zoomType: 'xy',
+        height:  '100%'
+      },
+      title: {
+        text: 'efeitosNormalizados'
+      },
+      // subtitle: {
+      //   text: 'Source: Heinz  2003'
+      // },
+      xAxis: {
+        title: {
+          enabled: true,
+          text: 'efeitos'
+        },
+        crosshair: true
+      },
+      yAxis: {
+        type: "linear",
+        width: 10,
+        crosshair: true,
+        alignTicks: false,
+        title: {
+          text: 'Z'
+        }
+      },
+      legend: {
+        layout: 'vertical',
+        align: 'left',
+        verticalAlign: 'top',
+        x: 100,
+        y: 70,
+        floating: true,
+        backgroundColor: Highcharts.defaultOptions.chart.backgroundColor,
+        borderWidth: 1
+      },
+      plotOptions: {
+        scatter: {
+          marker: {
+            radius: 5,
+            states: {
+              hover: {
+                enabled: true,
+                lineColor: 'rgb(100,100,100)'
+              }
+            }
+          },
+          states: {
+            hover: {
+              marker: {
+                enabled: false
+              }
+            }
+          },
+          tooltip: {
+            pointFormat: 'efeitos:{point.x}, Z:{point.y} '
+          }
+        }
+      },
+      series: [{
+        type: 'scatter',
+        name: 'Z x efeitos',
+        color: 'rgba(223, 83, 83, .5)',
+        data: [
+            [
+                "0.000000",
+                0.08333333333333333
+            ],
+            [
+                "0.000000",
+                0.25
+            ],
+            [
+                "0.000000",
+                0.41666666666666663
+            ],
+            [
+                "0.000000",
+                0.5833333333333333
+            ]
+        ]
+      }]
+    },
     regressaoChat: null,
     regressaoChat2: null,
+    regressaoChat3: null,
     max25chars: (v) => v.length <= 25 || "nome muito longo !",
   }),
 
@@ -2614,7 +2707,10 @@ export default {
       Plotly.newPlot('myDiv', [data], this.layoutSurface);
       console.log([data])
       console.log(document.getElementById("myDiv"))
-
+      console.log("this.opitionChart3.series[0]",this.opitionChart3.series[0])
+      this.opitionChart3.series[0].data = this.efeitos();
+      console.log("this.opitionChart3.series[0]",this.opitionChart3.series[0])
+      this.regressaoChat3.update(this.opitionChart3);
 
     },
     regrecaoFunction(Xs) {
@@ -2631,6 +2727,31 @@ export default {
       }
       )
       return Y
+    },
+    efeitos(){
+      console.log("efeitos",this.dsTesteT);
+      console.log("efeitos",this.dsTesteT[0]);
+      const normDist = new NormalDistribution();
+      var efeitos = [];
+      var N = Math.pow(2,this.Nvariaveis) +this.NReplicadas;
+      var calculo = 1/(N);
+      var Li=0;
+      var Ls= Li + calculo;
+      var pontomedio = (Li+Ls)/2;
+      var Z = normDist.zScore(pontomedio);
+      efeitos.push([this.dsTesteT[0].B,Z]);
+      console.log("efeitos",efeitos);
+      for (let index = 1; index < this.dsTesteT.length; index++) {
+        const element = this.dsTesteT[index];
+        Li=Ls;
+        Ls= Li + calculo;
+        pontomedio = (Li+Ls)/2;
+        Z = normDist.zScore(pontomedio);
+        efeitos.push([element.B,Z]);
+      }
+      console.log("efeitos",this.dsTesteT);
+      return efeitos;
+
     }
   },
   mounted() {
@@ -2643,6 +2764,7 @@ export default {
 
     this.regressaoChat = Highcharts.chart('container1', this.opitionChart1)
     this.regressaoChat2 = Highcharts.chart('container2', this.opitionChart2)
+    this.regressaoChat3 = Highcharts.chart('container3', this.opitionChart3)
     Highcharts.setOptions({
       colors: Highcharts.getOptions().colors.map(function (color) {
         return {
