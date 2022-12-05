@@ -313,7 +313,6 @@ export default {
     Plotly
   },
   data: () => ({
-
     //url:'https://apiplanex.herokuapp.com',//heroku
     url: 'http://127.0.0.1:5000',//local
     NReplicadas: 0,
@@ -2366,7 +2365,7 @@ export default {
             matrisY[element.index] = JSON.stringify(matrisY[element.index]);
 
             axios
-              .get(this.url + "/matriTesteT/" + this.Nvariaveis + "/" + this.NReplicadas + "/" + matrisY[element.index])
+              .get(this.url + "/2k/matriTesteT/" + this.Nvariaveis + "/" + this.NReplicadas + "/" + matrisY[element.index])
               .then(resp => {
                 this.dssTesteT[element.index] = resp.data.data.map(d => {
                   return { ...d, resposta: true }
@@ -2420,7 +2419,7 @@ export default {
             matrisY1[element.index] = JSON.stringify(matrisY1[element.index]);
 
             axios
-              .get(this.url + "/tab_anova/" + this.Nvariaveis + "/" + this.NReplicadas + "/" + matrisY[element.index] + "/" + matrisY1[element.index])
+              .get(this.url + "/2k/tab_anova/" + this.Nvariaveis + "/" + this.NReplicadas + "/" + matrisY[element.index] + "/" + matrisY1[element.index])
               .then(resp => {
                 this.dssTabAnova[element.index] = resp.data.data
 
